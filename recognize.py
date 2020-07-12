@@ -12,7 +12,7 @@ import uuid
 # start = time.time()
 kernel  = (3,3)
 def proceed(img_path):
-    img = cv2.imread('Switchblade_20200507170939.jpg')
+    img = cv2.imread(img_path)
     def kmeans(img):
         Z = img.reshape((-1,3))
 
