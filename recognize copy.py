@@ -95,8 +95,7 @@ def proceed(img_path):
         else:
             f = -2
         # cv2.rectangle(img,(x,y),(x+w,y+h),(0,0,255),5)
-        clster = kmeans(img[y:y+h, x:x+w])
-        img1 = getThreshold2(clster)
+        img1 = getThreshold(img[y:y+h, x:x+w])
         id = uuid.uuid4()
         cv2.imwrite(f'temp/roi_{id}.jpg', img1)
         string1 = pytesseract.image_to_string(f'temp/roi_{id}.jpg',config="--psm 7 --oem 3 --tessdata-dir .").replace(" ","_")
