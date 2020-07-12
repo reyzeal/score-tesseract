@@ -9,9 +9,10 @@ import _thread
 import time
 import os
 import uuid 
-# start = time.time()
+
 kernel  = (5,5)
 def proceed(img_path):
+    start = time.time()
     img = cv2.imread(img_path)
     def kmeans(img):
         Z = img.reshape((-1,3))
@@ -124,7 +125,11 @@ def proceed(img_path):
                 # print(string2, end="\t")
             data.update({string1:temp})
         # print()
+    end = time.time()
+# print(end - start)
+    result = {
+        "data" : data,
+        "time" : str(end-start)
+    }
     return data
 
-# end = time.time()
-# print(end - start)
