@@ -100,7 +100,7 @@ def proceed(img_path):
         id = uuid.uuid4()
         cv2.imwrite(f'temp/roi_{i}.jpg', img1)
         string1 = pytesseract.image_to_string(f'temp/roi_{i}.jpg').replace(" ","_")
-        # os.unlink(f'temp/roi_{id}.jpg')
+        os.unlink(f'temp/roi_{id}.jpg')
         # print(string1, end="\t")
         if len(string1) >0:
             temp = {}
@@ -129,7 +129,7 @@ def proceed(img_path):
 # print(end - start)
     result = {
         "data" : data,
-        "time" : str(end-start)
+        "time" : str(end-start)+" seconds"
     }
     return result
 
