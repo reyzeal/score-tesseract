@@ -10,7 +10,7 @@ import time
 import os
 import uuid 
 # start = time.time()
-kernel  = (3,3)
+kernel  = (5,5)
 def proceed(img_path):
     img = cv2.imread(img_path)
     def kmeans(img):
@@ -32,10 +32,10 @@ def proceed(img_path):
 
     def getThreshold(img):
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        ret2,th3 = cv2.threshold(gray,126,255,cv2.THRESH_BINARY)
+        ret2,th3 = cv2.threshold(gray,127,255,cv2.THRESH_BINARY)
         opening = cv2.morphologyEx(th3, cv2.MORPH_OPEN, kernel)
         opening = cv2.bitwise_not(opening)
-        opening = cv2.dilate(opening,kernel,iterations = 2)
+        opening = cv2.dilate(opening,kernel,iterations = 1)
         return opening
 
     def getThreshold2(img):
@@ -95,12 +95,11 @@ def proceed(img_path):
         else:
             f = -2
         # cv2.rectangle(img,(x,y),(x+w,y+h),(0,0,255),5)
-        clster = kmeans(img[y:y+h, x:x+w])
-        img1 = getThreshold2(clster)
+        img1 = getThreshold(img[y:y+h, x:x+w])
         id = uuid.uuid4()
-        cv2.imwrite(f'temp/roi_{id}.jpg', img1)
-        string1 = pytesseract.image_to_string(f'temp/roi_{id}.jpg',config="--psm 7 --oem 3 --tessdata-dir .").replace(" ","_")
-        os.unlink(f'temp/roi_{id}.jpg')
+        cv2.imwrite(f'temp/roi_{i}.jpg', img1)
+        string1 = pytesseract.image_to_string(f'temp/roi_{i}.jpg').replace(" ","_")
+        # os.unlink(f'temp/roi_{id}.jpg')
         # print(string1, end="\t")
         if len(string1) >0:
             temp = {}
