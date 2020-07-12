@@ -98,8 +98,8 @@ def proceed(img_path):
         # cv2.rectangle(img,(x,y),(x+w,y+h),(0,0,255),5)
         img1 = getThreshold(img[y:y+h, x:x+w])
         id = uuid.uuid4()
-        cv2.imwrite(f'temp/roi_{i}.jpg', img1)
-        string1 = pytesseract.image_to_string(f'temp/roi_{i}.jpg').replace(" ","_")
+        cv2.imwrite(f'temp/roi_{id}.jpg', img1)
+        string1 = pytesseract.image_to_string(f'temp/roi_{id}.jpg').replace(" ","_")
         os.unlink(f'temp/roi_{id}.jpg')
         # print(string1, end="\t")
         if len(string1) >0:
