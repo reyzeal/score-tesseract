@@ -98,60 +98,60 @@ label = [
     'damage',
     'healing'
 ]
-data = {}
-ROI_firstteam.extend(ROI_second)
-for i,roi in enumerate(ROI_firstteam):
-    x,y,w,h = roi
-    if y < 1000:
-        f = 0
-    else:
-        f = -2
-    cv2.rectangle(img,(x,y),(x+w,y+h),(0,0,255),5)
-    img1 = getThreshold(img[y:y+h, x:x+w])
-    cv2.imwrite(f'temp/roi_f1{i}.jpg', img1)
-    string1 = pytesseract.image_to_string(f'temp/roi_f1{i}.jpg',config="--psm 7 --oem 0 --tessdata-dir .").replace(" ","_")
-    print(string1, end="\t")
-    if len(string1) >0:
-        temp = {}
-        for j,score in enumerate(ROI_score):
-            a,b,c,d = score
+# data = {}
+# ROI_firstteam.extend(ROI_second)
+# for i,roi in enumerate(ROI_firstteam):
+#     x,y,w,h = roi
+#     if y < 1000:
+#         f = 0
+#     else:
+#         f = -2
+#     cv2.rectangle(img,(x,y),(x+w,y+h),(0,0,255),5)
+#     img1 = getThreshold(img[y:y+h, x:x+w])
+#     cv2.imwrite(f'temp/roi_f1{i}.jpg', img1)
+#     string1 = pytesseract.image_to_string(f'temp/roi_f1{i}.jpg',config="--psm 7 --oem 0 --tessdata-dir .").replace(" ","_")
+#     print(string1, end="\t")
+#     if len(string1) >0:
+#         temp = {}
+#         for j,score in enumerate(ROI_score):
+#             a,b,c,d = score
             
-            if j == 0:
-                # clster = kmeans(img[y+24+f:y+24+f+d, a:a+c])
-                _,clster = cv2.threshold(gray[y+24+f:y+24+f+d, a:a+c],0,127,cv2.THRESH_BINARY)
-                opening = cv2.morphologyEx(clster, cv2.MORPH_OPEN, kernel)
-                # cv2.rectangle(img,(a,y+24+f),(a+c,y+24+f+d),(0,0,255),5)
-                # img2 = getThreshold2(clster)
-                # h, w = img2.shape[:2]
-                # imgWhite = numpy.zeros((round(h*1.5), round(w*1.5)), numpy.uint8)
-                # imgWhite.fill(255)
-                # yt = round(h*1.5/2-h/2)
-                # xt = round(w*1.5/2-w/2)
-                # imgWhite[yt:yt+h,xt:xt+w] = img2
-                cv2.imwrite(f'temp/roi_f1{i}{j}.jpg', opening)
-                string2 = pytesseract.image_to_string(f'temp/roi_f1{i}{j}.jpg', config="--psm 7 --oem 0 -c tessedit_char_whitelist=0123456789 --tessdata-dir .")
-            else:
-                # clster = kmeans(img[y:y+d, a:a+c])
-                _,clster = cv2.threshold(gray[y:y+d, a:a+c],127,255,cv2.THRESH_BINARY)
-                opening = cv2.morphologyEx(clster, cv2.MORPH_OPEN, kernel)
-                # cv2.rectangle(img,(a,y),(a+c,y+d),(0,0,255),5)
-                # img2 = getThreshold2(clster)
-                cv2.imwrite(f'temp/roi_f1{i}{j}.jpg', opening)
-                string2 = pytesseract.image_to_string(f'temp/roi_f1{i}{j}.jpg', config="--psm 8 --oem 0 -c tessedit_char_whitelist=0123456789, --tessdata-dir .")
-            # else:
-            #     clster = kmeans(img[y:y+d, a:a+c])
-            #     cv2.rectangle(img,(a,y),(a+c,y+d),(0,0,255),5)
-            #     # img1 = getThreshold2(img[y:y+d, a:a+c])
-            #     img2 = getThreshold2(clster)
-            #     cv2.imwrite(f'temp/roi_f1{i}{j}.jpg', img2)
-            #     string2 = pytesseract.image_to_string(f'temp/roi_f1{i}{j}.jpg', config="--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789,.")
+#             if j == 0:
+#                 # clster = kmeans(img[y+24+f:y+24+f+d, a:a+c])
+#                 _,clster = cv2.threshold(gray[y+24+f:y+24+f+d, a:a+c],0,127,cv2.THRESH_BINARY)
+#                 opening = cv2.morphologyEx(clster, cv2.MORPH_OPEN, kernel)
+#                 # cv2.rectangle(img,(a,y+24+f),(a+c,y+24+f+d),(0,0,255),5)
+#                 # img2 = getThreshold2(clster)
+#                 # h, w = img2.shape[:2]
+#                 # imgWhite = numpy.zeros((round(h*1.5), round(w*1.5)), numpy.uint8)
+#                 # imgWhite.fill(255)
+#                 # yt = round(h*1.5/2-h/2)
+#                 # xt = round(w*1.5/2-w/2)
+#                 # imgWhite[yt:yt+h,xt:xt+w] = img2
+#                 cv2.imwrite(f'temp/roi_f1{i}{j}.jpg', opening)
+#                 string2 = pytesseract.image_to_string(f'temp/roi_f1{i}{j}.jpg', config="--psm 7 --oem 0 -c tessedit_char_whitelist=0123456789 --tessdata-dir .")
+#             else:
+#                 # clster = kmeans(img[y:y+d, a:a+c])
+#                 _,clster = cv2.threshold(gray[y:y+d, a:a+c],127,255,cv2.THRESH_BINARY)
+#                 opening = cv2.morphologyEx(clster, cv2.MORPH_OPEN, kernel)
+#                 # cv2.rectangle(img,(a,y),(a+c,y+d),(0,0,255),5)
+#                 # img2 = getThreshold2(clster)
+#                 cv2.imwrite(f'temp/roi_f1{i}{j}.jpg', opening)
+#                 string2 = pytesseract.image_to_string(f'temp/roi_f1{i}{j}.jpg', config="--psm 8 --oem 0 -c tessedit_char_whitelist=0123456789, --tessdata-dir .")
+#             # else:
+#             #     clster = kmeans(img[y:y+d, a:a+c])
+#             #     cv2.rectangle(img,(a,y),(a+c,y+d),(0,0,255),5)
+#             #     # img1 = getThreshold2(img[y:y+d, a:a+c])
+#             #     img2 = getThreshold2(clster)
+#             #     cv2.imwrite(f'temp/roi_f1{i}{j}.jpg', img2)
+#             #     string2 = pytesseract.image_to_string(f'temp/roi_f1{i}{j}.jpg', config="--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789,.")
             
-            temp[label[j]] = string2
-            print(string2, end="\t")
-        data.update({string1:temp})
-    print()
+#             temp[label[j]] = string2
+#             print(string2, end="\t")
+#         data.update({string1:temp})
+#     print()
 
-print(data)
+# print(data)
 # for i,roi in enumerate(ROI_firstteam):
 #     x,y,w,h = roi
 #     img1 = getThreshold(img[y:y+h, x:x+w])
@@ -187,13 +187,13 @@ print(data)
 resized = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
 
 
-# ROIs = cv2.selectROIs('Select ROI', resized, True)
-# for roi in ROIs:
-#     roi[0] = roi[0] * 100/scale_percent
-#     roi[1] = roi[1] * 100/scale_percent
-#     roi[2] = roi[2] * 100/scale_percent
-#     roi[3] = roi[3] * 100/scale_percent
-#     print(roi[0],roi[1],roi[2],roi[3])
+ROIs = cv2.selectROIs('Select ROI', resized, True)
+for roi in ROIs:
+    roi[0] = roi[0] * 100/scale_percent
+    roi[1] = roi[1] * 100/scale_percent
+    roi[2] = roi[2] * 100/scale_percent
+    roi[3] = roi[3] * 100/scale_percent
+    print(roi[0],roi[1],roi[2],roi[3])
 # # ROI_1 = img[ROIs[0][1]:ROIs[0][1]+ROIs[0][3], ROIs[0][0]:ROIs[0][0]+ROIs[0][2]]
 
 # cv2.imshow('1', resized)

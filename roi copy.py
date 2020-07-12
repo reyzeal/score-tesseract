@@ -97,9 +97,7 @@ for i,roi in enumerate(ROI_firstteam):
         f = 0
     else:
         f = int(-2*scale_percent/100)
-    cv2.rectangle(img2,(x,y),(x+w,y+h),(0,0,255),5)
-    clster = kmeans(img[y:y+h, x:x+w])
-    img1 = getThreshold2(clster)
+    img1 = getThreshold(img[y:y+h, x:x+w])
     cv2.imwrite(f'temp/roi_f1{i}.jpg', img1)
     string1 = pytesseract.image_to_string(f'temp/roi_f1{i}.jpg',config="--psm 7 --oem 3 -c tessedit_do_invert=0 --tessdata-dir .").replace(" ","_")
     if len(string1) > 14:
