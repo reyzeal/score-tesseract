@@ -104,24 +104,24 @@ def proceed(img_path):
         # print(string1, end="\t")
         if len(string1) >0:
             temp = {}
-            for j,score in enumerate(ROI_score):
-                id = uuid.uuid4()
-                a,b,c,d = score
+            # for j,score in enumerate(ROI_score):
+            #     id = uuid.uuid4()
+            #     a,b,c,d = score
                 
-                if j == 0:
-                    clster = kmeans(img[y+24+f:y+24+f+d, a:a+c])
-                    # cv2.rectangle(img,(a,y+24+f),(a+c,y+24+f+d),(0,0,255),5)
-                    img2 = getThreshold2(clster)
-                    cv2.imwrite(f'temp/roi_{id}{j}.jpg', img2)
-                    string2 = pytesseract.image_to_string(f'temp/roi_{id}{j}.jpg', config="--psm 7 --oem 0 -c tessedit_char_whitelist=0123456789 -c tessedit_do_invert=0 --tessdata-dir .")
-                else:
-                    clster = kmeans(img[y:y+d, a:a+c])
-                    # cv2.rectangle(img,(a,y),(a+c,y+d),(0,0,255),5)
-                    img2 = getThreshold2(clster)
-                    cv2.imwrite(f'temp/roi_{id}{j}.jpg', img2)
-                    string2 = pytesseract.image_to_string(f'temp/roi_{id}{j}.jpg', config="--psm 8 --oem 0 -c tessedit_char_whitelist=0123456789, -c tessedit_do_invert=0 --tessdata-dir .")
-                os.unlink(f'temp/roi_{id}{j}.jpg')
-                temp[label[j]] = string2
+            #     if j == 0:
+            #         clster = kmeans(img[y+24+f:y+24+f+d, a:a+c])
+            #         # cv2.rectangle(img,(a,y+24+f),(a+c,y+24+f+d),(0,0,255),5)
+            #         img2 = getThreshold2(clster)
+            #         cv2.imwrite(f'temp/roi_{id}{j}.jpg', img2)
+            #         string2 = pytesseract.image_to_string(f'temp/roi_{id}{j}.jpg', config="--psm 7 --oem 0 -c tessedit_char_whitelist=0123456789 -c tessedit_do_invert=0 --tessdata-dir .")
+            #     else:
+            #         clster = kmeans(img[y:y+d, a:a+c])
+            #         # cv2.rectangle(img,(a,y),(a+c,y+d),(0,0,255),5)
+            #         img2 = getThreshold2(clster)
+            #         cv2.imwrite(f'temp/roi_{id}{j}.jpg', img2)
+            #         string2 = pytesseract.image_to_string(f'temp/roi_{id}{j}.jpg', config="--psm 8 --oem 0 -c tessedit_char_whitelist=0123456789, -c tessedit_do_invert=0 --tessdata-dir .")
+            #     os.unlink(f'temp/roi_{id}{j}.jpg')
+            #     temp[label[j]] = string2
                 # print(string2, end="\t")
             data.update({string1:temp})
         # print()
