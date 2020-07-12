@@ -131,5 +131,5 @@ def proceed(img_path):
         "data" : data,
         "time" : str(end-start)
     }
-    return data
+    return result
 
