@@ -179,6 +179,7 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
                 # print(string2, end="\t")
             data[teams].update({string1:temp})
         # print()
+    os.unlink(img_path)
     end = time.time()
 # print(end - start)
     result = {
