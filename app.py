@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 from werkzeug.utils import secure_filename
-from recognizeV2 import proceed as p
+from recognizeV3 import proceed as p
 import os
 app = Flask(__name__)
 
