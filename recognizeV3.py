@@ -57,7 +57,32 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
             threshold_inv = threshold
         img = cv2.morphologyEx(threshold_inv, cv2.MORPH_CLOSE, kernel)
         return img
+    def centroid(img):
+        bimg = cv2.bitwise_not(img)
+        blur = cv2.GaussianBlur(bimg,(55,55),0)
+        t = cv2.threshold(blur,10,255,cv2.THRESH_BINARY)[1]
+        t = numpy.uint8(t)
+        cnts, _ =cv2.findContours(t,1,2)
+        a,b,c,d = [blur.shape[1],blur.shape[0],0,0]
+        for cnt in cnts:
+            x,y,w,h = cv2.boundingRect(cnt)
+            a = min(a,x)
+            b = min(b,y)
+            d = max(d,y+h)
+            c = max(c,x+w)
+        if a > c:
+            a,c = c,a
+        if b > d:
+            b,d = d,b
+        newImg = img[b:d,a:c] 
 
+        # h,w = newImg.shape[:2]
+        # if w < 300 or h >= 300:
+        #     newImg = cv2.resize(newImg,(300,int(h*300/w)), interpolation=cv2.INTER_CUBIC)
+        # elif h < 300 or w >= 300:
+        #     newImg = cv2.resize(newImg,(int(w*300/h),300), interpolation=cv2.INTER_CUBIC)
+        # newImg = cv2.threshold(newImg,10,255,cv2.THRESH_BINARY)[1]
+        return newImg
     ROI_firstname = [347, 447, 200, 45]
     ROI_secondname = [347, 1042, 200, 45]
     ROI_firstteam = [
@@ -124,11 +149,13 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
         
         # cv2.rectangle(img,(x,y),(x+w,y+h),(0,0,255),5)
         img1 = getThreshold(img[y:y+h, x:x+w])
-        if i == 3 or i == 8:
-            img1 = img1[10:h-10,5:w-5]
-        else:
-            img1 = img1[15:h-10,5:w-5]
-        cv2.imwrite(filename, img1)
+        # cv2.imwrite(f'temp/roi_{i}_1.jpg', centroid(img1))
+        # cv2.imwrite(f'temp/roi_{i}_2.jpg', img1)
+        # if i == 3 or i == 8:
+        #     img1 = img1[10:h-10,5:w-5]
+        # else:
+        #     img1 = img1[15:h-10,5:w-5]
+        cv2.imwrite(filename, centroid(img1))
         # cv2.imwrite(f'temp/roi_{i}.jpg', img1)
         
         imgs = detect({
@@ -139,7 +166,7 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
                     "min_confidence" : 0.5
                 })
         if len(imgs) > 0:
-            cv2.imwrite(f'temp/roi_{i}.jpg', img1)
+            
             string1 = pytesseract.image_to_string(filename,config='--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789_-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ --tessdata-dir .').replace(" ","_")
         else:
             string1 = ""
@@ -163,19 +190,22 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
                     continue
                 
                 a,b,c,d = score
+                img2 = getThreshold(img[y:y+d, a:a+c])
                 
                 if j == 0:
                     if i == 3:
-                        img2 = getThreshold(img[y+24+f-10:y+24+f+d, a:a+c])
+                        img2 = getThreshold(img[y+24+f-20:y+24+f+d, a:a+c])
                     else:
                         img2 = getThreshold(img[y+24+f:y+24+f+d, a:a+c])
+                    img2 = centroid(img2)
                     cv2.imwrite(filename2, img2)
                     cv2.imwrite(f'temp/roi_{string1}_{label[j]}.jpg', img2)
                     string2 = pytesseract.image_to_string(filename2, config="--psm 13 --oem 0 -c tessedit_char_whitelist=0123456789 --tessdata-dir .").replace(" ","")
                 else:
-                    img2 = getThreshold(img[y:y+d, a:a+c])
+                    # img2 = getThreshold(img[y:y+d, a:a+c])
+                    img2 = centroid(img2)
                     cv2.imwrite(filename2, img2)
-                    # cv2.imwrite(f'temp/roi_{string1}_{label[j]}.jpg', img2)
+                    cv2.imwrite(f'temp/roi_{string1}_{label[j]}.jpg', img2)
                     string2 = pytesseract.image_to_string(filename2, config="--psm 13 --oem 0 -c tessedit_char_whitelist=0123456789, --tessdata-dir .").replace(" ","")
                 
                 os.unlink(filename2)
