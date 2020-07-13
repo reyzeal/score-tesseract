@@ -129,17 +129,17 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
 
     for i,roi in enumerate(ROI_firstteam):
         id = uuid.uuid4()
-        # filename = f'temp/roi_{id}.jpg'
-        filename = f'temp/roi_{i}.jpg'
+        filename = f'temp/roi_{id}.jpg'
+        # filename = f'temp/roi_{i}.jpg'
         x,y,w,h = roi
         
         # cv2.rectangle(img,(x,y),(x+w,y+h),(0,0,255),5)
         clster = kmeans(img[y:y+h, x:x+w], username=True)
-        cv2.imwrite(f'temp/roi_{i}_.jpg', img[y:y+h, x:x+w])
+        # cv2.imwrite(f'temp/roi_{i}_.jpg', img[y:y+h, x:x+w])
         img1 = getThreshold2(clster)
         cv2.imwrite(filename, img1)
         string1 = pytesseract.image_to_string(filename, config='--oem 1 -c tessedit_char_whitelist=0123456789-_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ --tessdata-dir ./fast').replace(" ","_")
-        # os.unlink(filename)
+        os.unlink(filename)
         if y < 1000:
             f = 0
             teams = team1
@@ -152,8 +152,8 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
             
             for j,score in enumerate(ROI_score):
                 id = uuid.uuid4()
-                # filename2 = f'temp/roi_{id}{j}.jpg'
-                filename2 = f'temp/roi_{string1}_{label[j]}.jpg'
+                filename2 = f'temp/roi_{id}{j}.jpg'
+                # filename2 = f'temp/roi_{string1}_{label[j]}.jpg'
                 hasil = config[label[j]]
                 # print(hasil)
                 if not hasil:
@@ -171,7 +171,7 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
                     img2 = getThreshold2(clster)
                     cv2.imwrite(filename2, img2)
                     string2 = pytesseract.image_to_string(filename2, config="--psm 8 --oem 0 -c tessedit_char_whitelist=0123456789, -c tessedit_do_invert=0 --tessdata-dir .")
-                # os.unlink(filename2)
+                os.unlink(filename2)
                 string2=string2.replace(",","").replace(".",'')
                 if string2 == '':
                     string2 = '0'
