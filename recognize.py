@@ -9,7 +9,7 @@ import _thread
 import time
 import os
 import uuid 
-
+from text_detection import detect
 kernel  = (5,5)
 def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "eliminations":False, "xp":False, "gold":False, "damage":False, "healing":False}):
     start = time.time()
@@ -20,8 +20,10 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
         img = cv2.resize(img, (3840, 2160), interpolation=cv2.INTER_CUBIC)
     def kmeans(img, username = False):
         if username:
+            img = cv2.resize(img, None, fx=1.2, fy=1.2, interpolation=cv2.INTER_CUBIC)
+            img=cv2.medianBlur(img, 1)
             alpha = 1.5 # Contrast control (1.0-3.0)
-            beta = 0 # Brightness control (0-100)
+            beta = 5 # Brightness control (0-100)
 
             img = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
         Z = img.reshape((-1,3))
@@ -61,12 +63,32 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
         
         img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     
-        img = cv2.inRange(img,img[0][0],img[0][0])
+        img = cv2.inRange(img,img[10][10],img[10][10])
         img = cv2.threshold(img,127,255,cv2.THRESH_BINARY)[1]
-        img = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
-        # img = cv2.dilate(img,kernel,iterations = 1)
-        return img
-
+        img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, kernel)
+        return img      
+        
+    def getThreshold3(img):
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    
+        img = cv2.inRange(img,img[10][10],img[10][10])
+        img = cv2.threshold(img,127,255,cv2.THRESH_BINARY)[1]
+        img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, kernel)
+        xi = cv2.bitwise_not(img)
+        blur = cv2.GaussianBlur(xi,(5,5),0)
+        ximage = cv2.threshold(blur,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)[1]
+        contours,hierarchy = cv2.findContours(ximage, 1, 2)
+        xmin, ymin, xmax, ymax = [img.shape[1], img.shape[0], 0, 0]
+        for cnt in contours:
+            area = cv2.contourArea(cnt)
+            if area >= 10:
+                x,y,w,h = cv2.boundingRect(cnt)
+                # ximage = img[y:y+h,x:x+w] 
+                xmin = min(xmin,x)
+                xmax = max(xmax,x+w)
+                ymin = min(ymin,y)
+                ymax = max(ymax,y+h)
+        return img[ymin-15:ymax+15,xmin-15:xmax+15]
     scale_percent = 40 # percent of original size
     width = int(img.shape[1] * scale_percent / 100)
     height = int(img.shape[0] * scale_percent / 100)
@@ -74,18 +96,18 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
     ROI_firstname = [347, 447, 200, 45]
     ROI_secondname = [347, 1042, 200, 45]
     ROI_firstteam = [
-        [471, 505, 505, 100],
-        [471, 615, 505, 90],
-        [471, 725, 505, 90],
-        [471, 835, 505, 85],
-        [471, 935, 505, 90],
+        [465, 505, 505, 100],
+        [465, 615, 505, 90],
+        [465, 725, 505, 90],
+        [465, 835, 505, 85],
+        [465, 935, 505, 90],
     ]
     ROI_second = [
-        [471, 1102, 505, 100],
-        [471, 1222, 505, 90],
-        [471, 1327, 505, 90],
-        [471, 1435, 505, 85],
-        [471, 1540, 505, 90],
+        [465, 1102, 505, 100],
+        [465, 1222, 505, 90],
+        [465, 1327, 505, 90],
+        [465, 1435, 505, 85],
+        [465, 1540, 505, 90],
     ]
     ROI_score = [
         [1350, 530, 37, 52],
@@ -134,12 +156,29 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
         x,y,w,h = roi
         
         # cv2.rectangle(img,(x,y),(x+w,y+h),(0,0,255),5)
-        clster = kmeans(img[y:y+h, x:x+w], username=True)
+        clster = cv2.resize(img[y:y+h, x:x+w], None, fx=1.5, fy=1.5, interpolation=cv2.INTER_CUBIC)
+        clster = kmeans(clster, username=True)
         # cv2.imwrite(f'temp/roi_{i}_.jpg', img[y:y+h, x:x+w])
         img1 = getThreshold2(clster)
         cv2.imwrite(filename, img1)
-        string1 = pytesseract.image_to_string(filename, config='--oem 1 -c tessedit_char_whitelist=0123456789-_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ --tessdata-dir ./fast').replace(" ","_")
-        os.unlink(filename)
+        string1 = pytesseract.image_to_string(filename).replace(" ","_")
+        if len(string1) == 0:
+            
+            img1 = getThreshold3(clster)
+            cv2.imwrite(filename, img1)
+            w,h = img1.shape[:2]
+            w = int(w/32)*32
+            imgs = detect({
+                "image" : filename,
+                "east" : "frozen_east_text_detection.pb",
+                "width" : w,
+                "height" : 32, 
+                "min_confidence" : 0.5
+            })
+            if len(imgs) > 0:
+                cv2.imwrite(filename, imgs[0])
+                string1 = pytesseract.image_to_string(filename, config='--psm 13 --oem 3 --tessdata-dir .').replace(" ","_")
+        # os.unlink(filename)
         if y < 1000:
             f = 0
             teams = team1
