@@ -51,6 +51,7 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
             threshold = cv2.dilate(threshold,(3,3),iterations = 1)
         else:
             threshold = cv2.erode(threshold,(3,3),iterations = 1)
+        
         if threshold[1][1] < 200:
             threshold_inv = cv2.bitwise_not(threshold)
         else:
@@ -155,18 +156,19 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
         #     img1 = img1[10:h-10,5:w-5]
         # else:
         #     img1 = img1[15:h-10,5:w-5]
-        cv2.imwrite(filename, centroid(img1))
+        c = centroid(img1)
+        cv2.imwrite(filename, c)
         # cv2.imwrite(f'temp/roi_{i}.jpg', img1)
-        
+        wtd = max(32, int(c.shape[1]/32)*32)
+        htd = max(32, int(c.shape[0]/32)*32)
         imgs = detect({
                     "image" : filename,
                     "east" : "frozen_east_text_detection.pb",
-                    "width" : 128,
-                    "height" : 32, 
+                    "width" : wtd,
+                    "height" : htd, 
                     "min_confidence" : 0.5
                 })
         if len(imgs) > 0:
-            
             string1 = pytesseract.image_to_string(filename,config='--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789_-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ --tessdata-dir .').replace(" ","_")
         else:
             string1 = ""
@@ -175,7 +177,7 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
             f = 0
             teams = team1
         else:
-            f = -4
+            f = -2
             teams = team2
         if len(string1) >0:
             temp = {}
@@ -194,19 +196,21 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
                 
                 if j == 0:
                     if i == 3:
-                        img2 = getThreshold(img[y+24+f-20:y+24+f+d, a:a+c])
+                        img2 = getThreshold(img[y+24+f-15:y+f+20+d, a:a+c])
+                    elif i == 9:
+                        img2 = getThreshold(img[y+26+f:y+33+f+d, a:a+c])
                     else:
-                        img2 = getThreshold(img[y+24+f:y+24+f+d, a:a+c])
+                        img2 = getThreshold(img[y+22+f:y+30+f+d, a:a+c])
                     img2 = centroid(img2)
                     cv2.imwrite(filename2, img2)
                     cv2.imwrite(f'temp/roi_{string1}_{label[j]}.jpg', img2)
-                    string2 = pytesseract.image_to_string(filename2, config="--psm 13 --oem 0 -c tessedit_char_whitelist=0123456789 --tessdata-dir .").replace(" ","")
+                    string2 = pytesseract.image_to_string(filename2, config="--psm 8 --oem 1 -c tessedit_char_whitelist=0123456789 --tessdata-dir .").replace(" ","")
                 else:
                     # img2 = getThreshold(img[y:y+d, a:a+c])
                     img2 = centroid(img2)
                     cv2.imwrite(filename2, img2)
                     cv2.imwrite(f'temp/roi_{string1}_{label[j]}.jpg', img2)
-                    string2 = pytesseract.image_to_string(filename2, config="--psm 13 --oem 0 -c tessedit_char_whitelist=0123456789, --tessdata-dir .").replace(" ","")
+                    string2 = pytesseract.image_to_string(filename2, config="--psm 7 --oem 0 -c tessedit_char_whitelist=0123456789, --tessdata-dir .").replace(" ","")
                 
                 os.unlink(filename2)
                 string2=string2.replace(",","").replace(".",'')
@@ -216,7 +220,8 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
                 # print(string2, end="\t")
             data[teams].update({string1:temp})
         # print()
-    os.unlink(img_path)
+    if os.path.isfile(img_path):
+        os.unlink(img_path)
     end = time.time()
 # print(end - start)
     result = {
