@@ -203,13 +203,13 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
                         img2 = getThreshold(img[y+22+f:y+30+f+d, a:a+c])
                     img2 = centroid(img2)
                     cv2.imwrite(filename2, img2)
-                    cv2.imwrite(f'temp/roi_{string1}_{label[j]}.jpg', img2)
+                    # cv2.imwrite(f'temp/roi_{string1}_{label[j]}.jpg', img2)
                     string2 = pytesseract.image_to_string(filename2, config="--psm 8 --oem 1 -c tessedit_char_whitelist=0123456789 --tessdata-dir .").replace(" ","")
                 else:
                     # img2 = getThreshold(img[y:y+d, a:a+c])
                     img2 = centroid(img2)
                     cv2.imwrite(filename2, img2)
-                    cv2.imwrite(f'temp/roi_{string1}_{label[j]}.jpg', img2)
+                    # cv2.imwrite(f'temp/roi_{string1}_{label[j]}.jpg', img2)
                     string2 = pytesseract.image_to_string(filename2, config="--psm 7 --oem 0 -c tessedit_char_whitelist=0123456789, --tessdata-dir .").replace(" ","")
                 
                 os.unlink(filename2)
