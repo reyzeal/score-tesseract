@@ -47,15 +47,18 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
         # threshold = cv2.adaptiveThreshold(blur,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
         # threshold = cv2.threshold(cv2.medianBlur(Y, 3), 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
         threshold = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+        k = numpy.ones((2,2),numpy.uint8)
         if changed:
             threshold = cv2.dilate(threshold,(3,3),iterations = 1)
         else:
             threshold = cv2.erode(threshold,(3,3),iterations = 1)
         
         if threshold[1][1] < 200:
+            threshold = cv2.erode(threshold,k,iterations = 1)
             threshold_inv = cv2.bitwise_not(threshold)
         else:
-            threshold_inv = threshold
+            threshold = cv2.erode(cv2.bitwise_not(threshold),k,iterations = 1)
+            threshold_inv = cv2.bitwise_not(threshold)
         img = cv2.morphologyEx(threshold_inv, cv2.MORPH_CLOSE, kernel)
         return img
     def centroid(img):
@@ -158,7 +161,7 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
         #     img1 = img1[15:h-10,5:w-5]
         c = centroid(img1)
         cv2.imwrite(filename, c)
-        # cv2.imwrite(f'temp/roi_{i}.jpg', img1)
+        cv2.imwrite(f'temp/roi_{i}.jpg', c)
         wtd = max(32, int(c.shape[1]/32)*32)
         htd = max(32, int(c.shape[0]/32)*32)
         imgs = detect({
@@ -169,7 +172,7 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
                     "min_confidence" : 0.5
                 })
         if len(imgs) > 0:
-            string1 = pytesseract.image_to_string(filename,config='--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789_-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ --tessdata-dir .').replace(" ","_")
+            string1 = pytesseract.image_to_string(filename,config='-l eng --psm 4 --oem 1 -c tessedit_char_whitelist=0123456789_-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ --tessdata-dir .').replace(" ","_")
         else:
             string1 = ""
         os.unlink(filename)
