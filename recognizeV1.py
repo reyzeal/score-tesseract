@@ -134,6 +134,7 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
     img1 = getThreshold2(clster)
     id = uuid.uuid4()
     cv2.imwrite(f'temp/roi_t1{id}.jpg', img1)
+    
     team1 = pytesseract.image_to_string(f'temp/roi_t1{id}.jpg').replace(" ","_")
     os.unlink(f'temp/roi_t1{id}.jpg')
     x,y,w,h = ROI_secondname
@@ -143,6 +144,9 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
     cv2.imwrite(f'temp/roi_t2{id}.jpg', img2)
     team2 = pytesseract.image_to_string(f'temp/roi_t2{id}.jpg').replace(" ","_")
     os.unlink(f'temp/roi_t2{id}.jpg')
+    # test
+    cv2.imwrite(f'temp/roi_t1.jpg', img1)
+    cv2.imwrite(f'temp/roi_t2.jpg', img2)
     data = {
         team1: {},
         team2: {}
@@ -158,26 +162,29 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
         # cv2.rectangle(img,(x,y),(x+w,y+h),(0,0,255),5)
         clster = cv2.resize(img[y:y+h, x:x+w], None, fx=1.5, fy=1.5, interpolation=cv2.INTER_CUBIC)
         clster = kmeans(clster, username=True)
-        # cv2.imwrite(f'temp/roi_{i}_.jpg', img[y:y+h, x:x+w])
+        cv2.imwrite(f'temp/roi_{i}.jpg', img[y:y+h, x:x+w])
         img1 = getThreshold2(clster)
         cv2.imwrite(filename, img1)
         string1 = pytesseract.image_to_string(filename).replace(" ","_")
         if len(string1) == 0:
             
             img1 = getThreshold3(clster)
-            cv2.imwrite(filename, img1)
-            w,h = img1.shape[:2]
-            w = int(w/32)*32
-            imgs = detect({
-                "image" : filename,
-                "east" : "frozen_east_text_detection.pb",
-                "width" : w,
-                "height" : 32, 
-                "min_confidence" : 0.5
-            })
-            if len(imgs) > 0:
-                cv2.imwrite(filename, imgs[0])
-                string1 = pytesseract.image_to_string(filename, config='--psm 13 --oem 3 --tessdata-dir .').replace(" ","_")
+            if not img1.empty():
+                cv2.imwrite(filename, img1)
+                w,h = img1.shape[:2]
+                w = int(w/32)*32
+                if w == 0:
+                    w = 32
+                imgs = detect({
+                    "image" : filename,
+                    "east" : "frozen_east_text_detection.pb",
+                    "width" : w,
+                    "height" : 32, 
+                    "min_confidence" : 0.5
+                })
+                if len(imgs) > 0:
+                    cv2.imwrite(filename, imgs[0])
+                    string1 = pytesseract.image_to_string(filename, config='--psm 13 --oem 3 --tessdata-dir .').replace(" ","_")
         # os.unlink(filename)
         if y < 1000:
             f = 0
@@ -204,11 +211,13 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
                     clster = kmeans(img[y+24+f:y+24+f+d, a:a+c])
                     img2 = getThreshold2(clster)
                     cv2.imwrite(filename2, img2)
+                    cv2.imwrite(f'temp/roi_{i}{j}.jpg', img[y+24+f:y+24+f+d, a:a+c])
                     string2 = pytesseract.image_to_string(filename2, config="--psm 7 --oem 0 -c tessedit_char_whitelist=0123456789 -c tessedit_do_invert=0 --tessdata-dir .")
                 else:
                     clster = kmeans(img[y:y+d, a:a+c])
                     img2 = getThreshold2(clster)
                     cv2.imwrite(filename2, img2)
+                    cv2.imwrite(f'temp/roi_{i}{j}.jpg', img[y:y+d, a:a+c])
                     string2 = pytesseract.image_to_string(filename2, config="--psm 8 --oem 0 -c tessedit_char_whitelist=0123456789, -c tessedit_do_invert=0 --tessdata-dir .")
                 os.unlink(filename2)
                 string2=string2.replace(",","").replace(".",'')
