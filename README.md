@@ -1,9 +1,18 @@
-# score-tesseract
-![Example](https://github.com/reyzeal/score-tesseract/raw/master/tester/Switchblade_20200608185314.jpg)
+# Switchblade Score-Tesseract OCR
 by reyzeal (Rizal Ardhi Rahmadani)
 
+## About Project
+This is documentation of my [Freelancer project](https://www.freelancer.co.id/projects/php/Image-text-OCR-using-tesseract-26533030/details). The goal of this project is to extract all information on the scoreboard from Switchblade games using Tesseract OCR as the core technology.
+
+## About Switchblade
+Switchblade is an arena-based 5v5 vehicle action game that combines high-octane combat with an ever shifting selection of strategic choices.
+https://www.switchbladegame.com/
+
+![Example](https://github.com/reyzeal/score-tesseract/raw/master/tester/Switchblade_20200608185314.jpg)
+
+## About OCR Engine environment
 Environment Ubuntu Server
-Python 3.x
+Python 3.x and Flask as web service
 Tesseract-OCR
 OpenCV 4.x
 
