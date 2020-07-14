@@ -49,19 +49,18 @@ Environment Ubuntu Server
     how to use vim / nano, you can directly create new file in
     **/etc/systemd/system/score.service** using this command : “sudo nano
     **/etc/systemd/system/score.service** ”.
-    [Unit]
-    Description=Reyzeal Score Tesseract Gunicorn daemon
-    After=network.target
+```  
+[Unit]
+Description=Reyzeal Score Tesseract Gunicorn daemon
+After=network.target
 
-```
 [Service]
 User= ubuntu
 Group= ubuntu
 WorkingDirectory= /home/ubuntu/score-tesseract
 ExecStart= /home/ubuntu/score-tesseract/ venv/bin/gunicorn -w 3 -b
 127.0.0.1:5000 app:app
-```
-```
+
 [Install]
 WantedBy=multi-user.target
 ```
