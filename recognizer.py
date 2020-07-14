@@ -11,9 +11,9 @@ import os
 import uuid 
 from text_detection import detect
 kernel  = (5,5)
-def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "eliminations":False, "xp":False, "gold":False, "damage":False, "healing":False}):
+def proceed(img, img_name, config={"level":False, "deaths":False, "mobs":False, "eliminations":False, "xp":False, "gold":False, "damage":False, "healing":False}):
     start = time.time()
-    img = cv2.imread(img_path)
+    img = cv2.cvtColor(numpy.array(img), cv2.COLOR_RGB2BGR)
 
     w = img.shape[1]
     h = img.shape[0]
@@ -28,24 +28,12 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
         if w < 300 and h < 300:
             img = cv2.resize(img, None, fx=1.5, fy=1.5, interpolation=cv2.INTER_CUBIC)
         kernel  = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(2,2))
-        # get V part
-        # alpha = 1.0 # Contrast control (1.0-3.0)
-        # beta = 5 # Brightness control (0-100)
-
-        # img = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
-        # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        # hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
         YCrCb = cv2.cvtColor(img, cv2.COLOR_BGR2YCrCb)
-        # h,s,v = cv2.split(hsv)
         Y,Cr,Cb = cv2.split(YCrCb)
-        # temp = numpy.concatenate((gray,h,s,v,Y,Cr,Cb), axis=0)
-        # cv2.imwrite('temp/'+str(uuid.uuid4())+'.jpg',temp)
         if changed:
             blur = cv2.GaussianBlur(Y,(5,5),0)
         else:
             blur = cv2.GaussianBlur(Y,(3,3),1)
-        # threshold = cv2.adaptiveThreshold(blur,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
-        # threshold = cv2.threshold(cv2.medianBlur(Y, 3), 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
         threshold = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
         k = numpy.ones((2,2),numpy.uint8)
         if changed:
@@ -79,13 +67,6 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
         if b > d:
             b,d = d,b
         newImg = img[b:d,a:c] 
-
-        # h,w = newImg.shape[:2]
-        # if w < 300 or h >= 300:
-        #     newImg = cv2.resize(newImg,(300,int(h*300/w)), interpolation=cv2.INTER_CUBIC)
-        # elif h < 300 or w >= 300:
-        #     newImg = cv2.resize(newImg,(int(w*300/h),300), interpolation=cv2.INTER_CUBIC)
-        # newImg = cv2.threshold(newImg,10,255,cv2.THRESH_BINARY)[1]
         return newImg
     ROI_firstname = [347, 447, 200, 45]
     ROI_secondname = [347, 1042, 200, 45]
@@ -125,20 +106,12 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
     ]
     x,y,w,h = ROI_firstname
     img1 = getThreshold(img[y:y+h, x:x+w])
-    id = uuid.uuid4()
-    cv2.imwrite(f'temp/roi_t1{id}.jpg', img1)
-    
-    team1 = pytesseract.image_to_string(f'temp/roi_t1{id}.jpg').replace(" ","_")
-    os.unlink(f'temp/roi_t1{id}.jpg')
+    team1 = pytesseract.image_to_string(img1).replace(" ","_")
+
     x,y,w,h = ROI_secondname
     img2 = getThreshold(img[y:y+h, x:x+w])
-    id = uuid.uuid4()
-    cv2.imwrite(f'temp/roi_t2{id}.jpg', img2)
-    team2 = pytesseract.image_to_string(f'temp/roi_t2{id}.jpg').replace(" ","_")
-    os.unlink(f'temp/roi_t2{id}.jpg')
-    # # test
-    # cv2.imwrite(f'temp/roi_t1.jpg', img1)
-    # cv2.imwrite(f'temp/roi_t2.jpg', img2)
+    team2 = pytesseract.image_to_string(img2).replace(" ","_")
+    
     data = {
         team1: {},
         team2: {}
@@ -146,36 +119,23 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
     ROI_firstteam.extend(ROI_second)
 
     for i,roi in enumerate(ROI_firstteam):
-        id = uuid.uuid4()
-        filename = f'temp/roi_{id}.jpg'
-        # filename = f'temp/roi_{i}.jpg'
         x,y,w,h = roi
         
-        # cv2.rectangle(img,(x,y),(x+w,y+h),(0,0,255),5)
         img1 = getThreshold(img[y:y+h, x:x+w])
-        # cv2.imwrite(f'temp/roi_{i}_1.jpg', centroid(img1))
-        # cv2.imwrite(f'temp/roi_{i}_2.jpg', img1)
-        # if i == 3 or i == 8:
-        #     img1 = img1[10:h-10,5:w-5]
-        # else:
-        #     img1 = img1[15:h-10,5:w-5]
         c = centroid(img1)
-        cv2.imwrite(filename, c)
-        # cv2.imwrite(f'temp/roi_{i}.jpg', c)
         wtd = max(32, int(c.shape[1]/32)*32)
         htd = max(32, int(c.shape[0]/32)*32)
         imgs = detect({
-                    "image" : filename,
+                    "image" : c,
                     "east" : "frozen_east_text_detection.pb",
                     "width" : wtd,
                     "height" : htd, 
                     "min_confidence" : 0.5
                 })
         if len(imgs) > 0:
-            string1 = pytesseract.image_to_string(filename,config='-l eng --psm 4 --oem 1 -c tessedit_char_whitelist=0123456789_-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ --tessdata-dir .').replace(" ","_")
+            string1 = pytesseract.image_to_string(c,config='-l eng --psm 4 --oem 1 -c tessedit_char_whitelist=0123456789_-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ --tessdata-dir .').replace(" ","_")
         else:
             string1 = ""
-        os.unlink(filename)
         if y < 1000:
             f = 0
             teams = team1
@@ -186,17 +146,10 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
             temp = {}
             
             for j,score in enumerate(ROI_score):
-                id = uuid.uuid4()
-                filename2 = f'temp/roi_{id}{j}.jpg'
-                # filename2 = f'temp/roi_{string1}_{label[j]}.jpg'
                 hasil = config[label[j]]
-                # print(hasil)
                 if not hasil:
                     continue
-                
                 a,b,c,d = score
-                img2 = getThreshold(img[y:y+d, a:a+c])
-                
                 if j == 0:
                     if i == 3:
                         img2 = getThreshold(img[y+24+f-15:y+f+20+d, a:a+c])
@@ -205,30 +158,20 @@ def proceed(img_path, config={"level":False, "deaths":False, "mobs":False, "elim
                     else:
                         img2 = getThreshold(img[y+22+f:y+30+f+d, a:a+c])
                     img2 = centroid(img2)
-                    cv2.imwrite(filename2, img2)
-                    # cv2.imwrite(f'temp/roi_{string1}_{label[j]}.jpg', img2)
-                    string2 = pytesseract.image_to_string(filename2, config="--psm 8 --oem 1 -c tessedit_char_whitelist=0123456789 --tessdata-dir .").replace(" ","")
+                    string2 = pytesseract.image_to_string(img2, config="--psm 8 --oem 1 -c tessedit_char_whitelist=0123456789 --tessdata-dir .").replace(" ","")
                 else:
-                    # img2 = getThreshold(img[y:y+d, a:a+c])
+                    img2 = getThreshold(img[y:y+d, a:a+c])
                     img2 = centroid(img2)
-                    cv2.imwrite(filename2, img2)
-                    # cv2.imwrite(f'temp/roi_{string1}_{label[j]}.jpg', img2)
-                    string2 = pytesseract.image_to_string(filename2, config="--psm 7 --oem 0 -c tessedit_char_whitelist=0123456789, --tessdata-dir .").replace(" ","")
+                    string2 = pytesseract.image_to_string(img2, config="--psm 7 --oem 0 -c tessedit_char_whitelist=0123456789, --tessdata-dir .").replace(" ","")
                 
-                os.unlink(filename2)
                 string2=string2.replace(",","").replace(".",'')
                 if string2 == '':
                     string2 = '0'
                 temp[label[j]] = int(string2)
-                # print(string2, end="\t")
             data[teams].update({string1:temp})
-        # print()
-    if os.path.isfile(img_path):
-        os.unlink(img_path)
     end = time.time()
-# print(end - start)
     result = {
-        "filename" : os.path.basename(img_path),
+        "filename" : os.path.basename(img_name),
         "request" : config,
         "data" : data,
         "time" : str(end-start)+" seconds"

@@ -26,9 +26,12 @@ import pytesseract
 
 def detect(args):
     # load the input image and grab the image dimensions
-    image = cv2.imread(args["image"])
-    orig = image.copy()
+    image = args["image"]
     (H, W) = image.shape[:2]
+    if image.ndim == 2:
+        image = cv2.merge((image,image,image))
+    orig = image.copy()
+    
     
 
     # set the new width and height and then determine the ratio in change
