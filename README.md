@@ -12,9 +12,9 @@ https://www.switchbladegame.com/
 
 ## About OCR Engine environment
 Environment Ubuntu Server
-Python 3.x and Flask as web service
-Tesseract-OCR
-OpenCV 4.x
+* Python 3.x and Flask as web service
+* Tesseract-OCR 4, english language
+* OpenCV 4.x with dnn to use EAST Text Detection
 
 ## Manual Installation
 
