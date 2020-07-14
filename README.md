@@ -29,10 +29,9 @@ OpenCV 4.x
 8. you can try to run it:
     venv/bin/gunicorn -b 127.0.0.1:5000 app:app
 
+![Image of server]
+(https://github.com/reyzeal/score-tesseract/raw/master/server/first.png)
 
-```
-by reyzeal (Rizal Ardhi Rahmadani)
-```
 9. Done, if you prefer to run it as server service, stop the execution and do the following steps
     below.
 
@@ -71,13 +70,11 @@ ExecStart= **/path/to/project/** venv/bin/gunicorn -w 3 -b 127.0.0.1:5000 app:ap
     sudo systemctl enable score.service
     sudo systemctl start score.service
 
-
-by reyzeal (Rizal Ardhi Rahmadani)
-
 5. Check the status, it must be look like this:
 
 sudo systemctl status score.service
-
+![Image of server]
+(https://github.com/reyzeal/score-tesseract/raw/master/server/second.png)
 ## Apache2 Configuration
 
 If you want to make proxy through apache2 (make it public), you can add this following lines to
