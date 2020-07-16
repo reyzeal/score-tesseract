@@ -16,6 +16,7 @@ https://www.switchbladegame.com/
 1. First of all, make sure you have Python3 installed + Python virtualenv
 ```bash
     sudo apt-get install python3 python3-pip python3-virtualenv
+```
 2. Install Tesseract-ocr
 ```bash
     sudo apt-get install tesseract-ocr
