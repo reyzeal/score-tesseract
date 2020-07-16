@@ -15,7 +15,7 @@ Python >= 3.6 is working fine
 #### MacOS
 Using Homebrew : `brew install python3`\
 or\
-Using installer, select Stable Releases, download it and install : https://www.python.org/downloads/mac-osx/\
+Using installer, select Stable Releases, download it and install : https://www.python.org/downloads/mac-osx/ \
 or\
 Follow this instruction : https://docs.python-guide.org/starting/install3/osx/
 
