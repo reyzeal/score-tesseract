@@ -6,23 +6,23 @@ by reyzeal (Rizal Ardhi Rahmadani)
 This is documentation of my [Freelancer project](https://www.freelancer.co.id/projects/php/Image-text-OCR-using-tesseract-26533030/details). The goal of this project is to extract all information on the scoreboard from Switchblade games using Tesseract OCR as the core technology.
 
 ## About Switchblade
-Switchblade is an arena-based 5v5 vehicle action game that combines high-octane combat with an ever shifting selection of strategic choices.
+Switchblade is an arena-based 5v5 vehicle action game that combines high-octane combat with an ever shifting selection of strategic choices.\
 https://www.switchbladegame.com/
 
 ## Requirements / Preparation
 ### Python 3 Installation
 Python >= 3.6 is working fine
 #### MacOS
-Using Homebrew : `brew install python3`
-or
-Using installer, select Stable Releases, download it and install : https://www.python.org/downloads/mac-osx/
-or
-Follow this instruction : https://docs.python-guide.org/starting/install3/osx/
-
+Using Homebrew : `brew install python3`\
+or\
+Using installer, select Stable Releases, download it and install : https://www.python.org/downloads/mac-osx/\
+or\
+Follow this instruction : https://docs.python-guide.org/starting/install3/osx/\
+\
 #### Ubuntu
 Using apt-get : `sudo apt-get install python3 python3-pip`
 #### Windows
-Download and Install : https://www.python.org/downloads/windows/
+Download and Install : https://www.python.org/downloads/windows/\
 Make sure you checked the option for add Python3 to your computer Environment.
 
 #### Testing Python3
@@ -34,9 +34,9 @@ Make sure your Python 3 is installed properly:
 
 ### Tesseract-OCR Installation
 #### MacOS
-Using MacPorts : `sudo port install tesseract`
-or
-Using Brew : `brew install tesseract`
+Using MacPorts : `sudo port install tesseract`\
+or\
+Using Brew : `brew install tesseract`\
 #### Ubuntu
 Using apt-get : `sudo apt-get install tesseract-ocr`
 #### Windows
@@ -50,8 +50,8 @@ Make sure your tesseract is installed properly:
 ![Image](https://github.com/reyzeal/score-tesseract/raw/master/docs/tesseract.png)
 
 ### Mysql Connector
-Mysql Connector is required to connect python to mysql server. You must know which mysql server that you're using in this project.
-
+Mysql Connector is required to connect python to mysql server. You must know which mysql server that you're using in this project.\
+\
 Connector/Python Version|MySQL Server Versions|Supported Python Versions
 ------------------------|---------------------|-------------------------
 8.0|8.0, 5.7, 5.6, 5.5|3.6, 3.5, 3.4, 2.7
@@ -59,9 +59,9 @@ Connector/Python Version|MySQL Server Versions|Supported Python Versions
 2.1|5.7, 5.6, 5.5|3.5, 3.4, 2.7, 2.6
 2.0|5.7, 5.6, 5.5|3.5, 3.4, 2.7, 2.6
 1.2|5.7, 5.6, 5.5 (5.1, 5.0, 4.1)|3.4, 3.3, 3.2, 3.1, 2.7, 2.6
-
-Check it here https://dev.mysql.com/downloads/connector/python/
-
+\
+Check it here https://dev.mysql.com/downloads/connector/python/\
+\
 ## Instruction
 1. Download this project using git or download zip [here](https://github.com/reyzeal/score-tesseract/archive/master.zip)
 2. Unzip the file and open the project's folder
@@ -105,7 +105,7 @@ usage: cli.py [-h] [-a [ALL]] [-l [LEVEL]] [-e [ELIMINATIONS]] [-t [DEATHS]] [-m
 ```
 
 ## Mysql Table Schema
-This script will create a table named `scoreboard` with 3 fields as primary keys, known as composite key. There are Filename, Team, and Username.
+This script will create a table named `scoreboard` with 3 fields as primary keys, known as composite key. There are Filename, Team, and Username.\
 Name|Datatype
 ----|--------
 filename|varchar(50)

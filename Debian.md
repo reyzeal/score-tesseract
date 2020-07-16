@@ -1,37 +1,51 @@
 # Switchblade Score-Tesseract OCR
-Debian 8 Server Environment
-by reyzeal (Rizal Ardhi Rahmadani)
-
+Debian 8 Server Environment\
+by reyzeal (Rizal Ardhi Rahmadani)\
+\
 ## About Project
 This is documentation of my [Freelancer project](https://www.freelancer.co.id/projects/php/Image-text-OCR-using-tesseract-26533030/details). The goal of this project is to extract all information on the scoreboard from Switchblade games using Tesseract OCR as the core technology.
-
+\
 ## About Switchblade
 Switchblade is an arena-based 5v5 vehicle action game that combines high-octane combat with an ever shifting selection of strategic choices.
 https://www.switchbladegame.com/
 
 ![Example](https://github.com/reyzeal/score-tesseract/raw/master/tester/Switchblade_20200608185314.jpg)
-
+\
 ## Manual Installation
 
 1. First of all, make sure you have Python3 installed + Python virtualenv
+```bash
     sudo apt-get install python3 python3-pip python3-virtualenv
 2. Install Tesseract-ocr
+```bash
     sudo apt-get install tesseract-ocr
+```
 3. Install the dependency library
+```bash
     sudo apt-get install libsm
+```
 4. Download my source code to your specified server directory
+```bash
     cd ~
     git clone https://github.com/reyzeal/score-tesseract
     cd score-tesseract
+```
 5. Create virtualenv to make python environment for this project
+```bash
     virtualenv venv
+```
 6. Activate the environment
+```bash
     source venv/bin/activate
+```
 7. Install all requirements library using requirements.txt
+```bash
     pip3 install -r requirements.txt
+```
 8. you can try to run it:
+```bash
     venv/bin/gunicorn -b 127.0.0.1:5000 app:app
-
+```
 ![Image of server](https://github.com/reyzeal/score-tesseract/raw/master/server/first.png)
 
 9. Done, if you prefer to run it as server service, stop the execution and do the following steps
@@ -59,37 +73,39 @@ ExecStart= /home/ubuntu/score-tesseract/ venv/bin/gunicorn -w 3 -b
 WantedBy=multi-user.target
 ```
 2. Change all variables, focus on the red mark:
-
+```bash
 User= **<your username>**
 Group= **<your username>**
 WorkingDirectory= **/path/to/project**
 ExecStart= **/path/to/project/** venv/bin/gunicorn -w 3 -b 127.0.0.1:5000 app:app
-
+```
 3. Save the file on **/etc/systemd/system/score.service.** Just save and close it if you already
     using vim / nano directly.
 4. Enable and start:
+```bash
     sudo systemctl enable score.service
     sudo systemctl start score.service
-
+```
 5. Check the status, it must be look like this:
-
+```bash
 sudo systemctl status score.service
-
+```
 ![Image of server](https://github.com/reyzeal/score-tesseract/raw/master/server/second.png)
 
 ## Apache2 Configuration
 
 If you want to make proxy through apache2 (make it public), you can add this following lines to
 your current site config file.
-
+```bash
 ProxyPreserveHost On
 ProxyPass / [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
 ProxyPassReverse / [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
-
+```
 **Note : Make sure you have these mod enabled:**
+```bash
 sudo a2enmod proxy
 sudo a2enmod proxy_http
-
+```
 ## Preview
 ### Input File
 ![Example](https://github.com/reyzeal/score-tesseract/raw/master/tester/Switchblade_20200608185314.jpg)
