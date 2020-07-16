@@ -53,7 +53,7 @@ Make sure your tesseract is installed properly:
 
 ### Mysql Connector
 Mysql Connector is required to connect python to mysql server. You must know which mysql server that you're using in this project.\
-
+Check it here https://dev.mysql.com/downloads/connector/python/
 Connector/Python Version|MySQL Server Versions|Supported Python Versions
 ------------------------|---------------------|-------------------------
 8.0|8.0, 5.7, 5.6, 5.5|3.6, 3.5, 3.4, 2.7
@@ -61,9 +61,6 @@ Connector/Python Version|MySQL Server Versions|Supported Python Versions
 2.1|5.7, 5.6, 5.5|3.5, 3.4, 2.7, 2.6
 2.0|5.7, 5.6, 5.5|3.5, 3.4, 2.7, 2.6
 1.2|5.7, 5.6, 5.5 (5.1, 5.0, 4.1)|3.4, 3.3, 3.2, 3.1, 2.7, 2.6
-------------------------|---------------------|-------------------------
-Check it here https://dev.mysql.com/downloads/connector/python/
-
 ## Instruction
 1. Download this project using git or download zip [here](https://github.com/reyzeal/score-tesseract/archive/master.zip)
 2. Unzip the file and open the project's folder
