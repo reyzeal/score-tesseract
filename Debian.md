@@ -25,7 +25,7 @@ https://www.switchbladegame.com/
 ```bash
     sudo apt-get install libsm6
 ```
-4. Download my source code to your specified server directory
+4. Download my source code to your specified server directory. Install git if it's not installed yet `apt-get install git`.
 ```bash
     cd ~
     git clone https://github.com/reyzeal/score-tesseract
@@ -33,7 +33,7 @@ https://www.switchbladegame.com/
 ```
 5. Create virtualenv to make python environment for this project
 ```bash
-    virtualenv venv
+    python3 -m virtualenv venv
 ```
 6. Activate the environment
 ```bash
