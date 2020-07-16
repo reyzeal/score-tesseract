@@ -52,7 +52,7 @@ def detect(args):
         "feature_fusion/concat_3"]
 
     # load the pre-trained EAST text detector
-    print("[INFO] loading EAST text detector...")
+    # print("[INFO] loading EAST text detector...")
     net = cv2.dnn.readNet(args["east"])
 
     # construct a blob from the image and then perform a forward pass of
@@ -65,7 +65,7 @@ def detect(args):
     end = time.time()
 
     # show timing information on text prediction
-    print("[INFO] text detection took {:.6f} seconds".format(end - start))
+    # print("[INFO] text detection took {:.6f} seconds".format(end - start))
 
     # grab the number of rows and columns from the scores volume, then
     # initialize our set of bounding box rectangles and corresponding

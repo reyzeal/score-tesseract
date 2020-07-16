@@ -11,10 +11,22 @@ import os
 import uuid 
 from text_detection import detect
 kernel  = (5,5)
-def proceed(img, img_name, config={"level":False, "deaths":False, "mobs":False, "eliminations":False, "xp":False, "gold":False, "damage":False, "healing":False}):
+class dummytqdm:
+    def __init__():
+        self.total = 10
+        pass
+    def update(x):
+        pass
+def proceed(img, img_name, config={"level":False, "deaths":False, "mobs":False, "eliminations":False, "xp":False, "gold":False, "damage":False, "healing":False}, tqdm=None):
     start = time.time()
     img = cv2.cvtColor(numpy.array(img), cv2.COLOR_RGB2BGR)
-
+    hitungan = 10
+    if tqdm is None:
+        tqdm = dummytqdm()
+    for i in config.keys():
+        if config[i]:
+            hitungan += 10
+    hitungan = round(tqdm.total/hitungan)
     w = img.shape[1]
     h = img.shape[0]
     changed = False
@@ -133,6 +145,7 @@ def proceed(img, img_name, config={"level":False, "deaths":False, "mobs":False, 
                     "min_confidence" : 0.5
                 })
         if len(imgs) > 0:
+            # cv2.imwrite(f'temp/{i}.png',c)
             string1 = pytesseract.image_to_string(c,config='-l eng --psm 4 --oem 1 -c tessedit_char_whitelist=0123456789_-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ --tessdata-dir .').replace(" ","_")
         else:
             string1 = ""
@@ -142,6 +155,7 @@ def proceed(img, img_name, config={"level":False, "deaths":False, "mobs":False, 
         else:
             f = -2
             teams = team2
+        tqdm.update(hitungan)
         if len(string1) >0:
             temp = {}
             
@@ -168,6 +182,7 @@ def proceed(img, img_name, config={"level":False, "deaths":False, "mobs":False, 
                 if string2 == '':
                     string2 = '0'
                 temp[label[j]] = int(string2)
+                tqdm.update(hitungan)
             data[teams].update({string1:temp})
     end = time.time()
     result = {
