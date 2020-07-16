@@ -11,41 +11,52 @@ https://www.switchbladegame.com/
 
 ![Example](https://github.com/reyzeal/score-tesseract/raw/master/tester/Switchblade_20200608185314.jpg)
 
-## Manual Installation
-
-1. First of all, make sure you have Python3 installed + Python virtualenv
+## Instruction
+1. Install core dependency
 ```bash
-    sudo apt-get install python3 python3-pip python3-virtualenv
+apt-get install -y build-essential libssl-dev zlib1g-dev libbz2-dev \
+libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
+xz-utils tk-dev libffi-dev liblzma-dev python-openssl git libsm6
 ```
 2. Install Tesseract-ocr
 ```bash
-    sudo apt-get install tesseract-ocr
+sudo apt-get install tesseract-ocr
 ```
-3. Install the dependency library
+3. Install the python 3.6.11 through pyenv
 ```bash
-    sudo apt-get install libsm6
+curl https://pyenv.run | bash
+
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
+exec $SHELL
+
+pyenv install 3.6.11
+pyenv global 3.5.2
+pip3 install --upgrade pip
 ```
 4. Download my source code to your specified server directory. Install git if it's not installed yet `apt-get install git`.
 ```bash
-    cd ~
-    git clone https://github.com/reyzeal/score-tesseract
-    cd score-tesseract
+cd ~
+git clone https://github.com/reyzeal/score-tesseract
+cd score-tesseract
 ```
 5. Create virtualenv to make python environment for this project
 ```bash
-    python3 -m virtualenv venv
+python3 -m virtualenv venv
 ```
 6. Activate the environment
 ```bash
-    source venv/bin/activate
+source venv/bin/activate
 ```
 7. Install all requirements library using requirements.txt
 ```bash
-    pip3 install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 8. you can try to run it:
 ```bash
-    venv/bin/gunicorn -b 127.0.0.1:5000 app:app
+venv/bin/gunicorn -b 127.0.0.1:5000 app:app
 ```
 ![Image of server](https://github.com/reyzeal/score-tesseract/raw/master/server/first.png)
 
