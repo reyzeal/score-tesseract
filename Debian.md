@@ -23,7 +23,7 @@ https://www.switchbladegame.com/
 ```
 3. Install the dependency library
 ```bash
-    sudo apt-get install libsm
+    sudo apt-get install libsm6
 ```
 4. Download my source code to your specified server directory
 ```bash
