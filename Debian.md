@@ -1,4 +1,5 @@
 # Switchblade Score-Tesseract OCR
+Debian 8 Server Environment
 by reyzeal (Rizal Ardhi Rahmadani)
 
 ## About Project
@@ -10,20 +11,10 @@ https://www.switchbladegame.com/
 
 ![Example](https://github.com/reyzeal/score-tesseract/raw/master/tester/Switchblade_20200608185314.jpg)
 
-## About OCR Engine environment
-Environment Ubuntu Server
-* Python 3.x and Flask as web service
-* Tesseract-OCR 4, english language
-* OpenCV 4.x with dnn to use EAST Text Detection
-
-## Other Documentation
-   Debian 8 Server Documentation [here](https://github.com/reyzeal/score-tesseract/raw/master/Debian.md)
-   Command Line Local Environment [here](https://github.com/reyzeal/score-tesseract/raw/master/CLI.md)
-
 ## Manual Installation
 
-1. First of all, make sure you have Python3 installed
-    sudo apt-get install python3 python3-pip
+1. First of all, make sure you have Python3 installed + Python virtualenv
+    sudo apt-get install python3 python3-pip python3-virtualenv
 2. Install Tesseract-ocr
     sudo apt-get install tesseract-ocr
 3. Install the dependency library
@@ -32,9 +23,8 @@ Environment Ubuntu Server
     cd ~
     git clone https://github.com/reyzeal/score-tesseract
     cd score-tesseract
-5. Install the virtualenv to make python environment for this project
-    pip3 install virtualenv
-    python3 -m virtualenv venv
+5. Create virtualenv to make python environment for this project
+    virtualenv venv
 6. Activate the environment
     source venv/bin/activate
 7. Install all requirements library using requirements.txt
