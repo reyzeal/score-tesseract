@@ -1,6 +1,6 @@
 # Switchblade Score-Tesseract OCR
 by reyzeal (Rizal Ardhi Rahmadani)\
-\
+
 ## About Project
 This is documentation of my [Freelancer project](https://www.freelancer.co.id/projects/php/Image-text-OCR-using-tesseract-26533030/details). The goal of this project is to extract all information on the scoreboard from Switchblade games using Tesseract OCR as the core technology.
 
@@ -17,9 +17,9 @@ Environment Ubuntu Server
 * OpenCV 4.x with dnn to use EAST Text Detection
 
 ## Other Documentation
-   Debian 8 Server Documentation [here](https://github.com/reyzeal/score-tesseract/raw/master/Debian.md)\
-   Command Line Local Environment [here](https://github.com/reyzeal/score-tesseract/raw/master/CLI.md)\
-\
+   Debian 8 Server Documentation [here](https://github.com/reyzeal/score-tesseract/blob/master/Debian.md)\
+   Command Line Local Environment [here](https://github.com/reyzeal/score-tesseract/blob/master/CLI.md)\
+
 ## Manual Installation
 
 1. First of all, make sure you have Python3 installed
