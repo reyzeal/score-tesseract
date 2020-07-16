@@ -29,14 +29,15 @@ Make sure you checked the option for add Python3 to your computer Environment.
 Make sure your Python 3 is installed properly:
 1. Open your command line
 2. Type `python3`
-3. It must be look like this:
+3. It must be look like this:\
+ 
 ![Image](https://github.com/reyzeal/score-tesseract/raw/master/docs/python3.png)
 
 ### Tesseract-OCR Installation
 #### MacOS
 Using MacPorts : `sudo port install tesseract`\
 or\
-Using Brew : `brew install tesseract`\
+Using Brew : `brew install tesseract`
 #### Ubuntu
 Using apt-get : `sudo apt-get install tesseract-ocr`
 #### Windows
