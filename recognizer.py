@@ -12,10 +12,10 @@ import uuid
 from text_detection import detect
 kernel  = (5,5)
 class dummytqdm:
-    def __init__():
+    def __init__(self):
         self.total = 10
         pass
-    def update(x):
+    def update(self,x):
         pass
 def proceed(img, img_name, config={"level":False, "deaths":False, "mobs":False, "eliminations":False, "xp":False, "gold":False, "damage":False, "healing":False}, tqdm=None):
     start = time.time()
