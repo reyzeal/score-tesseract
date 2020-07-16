@@ -22,7 +22,7 @@ Follow this instruction : https://docs.python-guide.org/starting/install3/osx/
 #### Ubuntu
 Using apt-get : `sudo apt-get install python3 python3-pip`
 #### Windows
-Download and Install : https://www.python.org/downloads/windows/\
+Download and Install : https://www.python.org/downloads/windows/ \
 Make sure you checked the option for add Python3 to your computer Environment.
 
 #### Testing Python3
