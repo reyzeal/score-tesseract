@@ -155,6 +155,7 @@ for filename in os.listdir(input_path):
             print(f'Skip file {filename}... ')
             logging.info(f'Skip file {filename}')
     except Error as e:
+        cursor = connection.cursor(prepared=True)
         logging.error(f"Error while scanning file {filename}, {e}")
     except Exception as e:
         logging.error(f"Error , {e}")
