@@ -10,23 +10,42 @@ import time
 import os
 import uuid 
 from text_detection import detect
+from time import sleep
 kernel  = (5,5)
+
 class dummytqdm:
     def __init__(self):
         self.total = 10
         pass
     def update(self,x):
         pass
-def proceed(img, img_name, config={"level":False, "deaths":False, "mobs":False, "eliminations":False, "xp":False, "gold":False, "damage":False, "healing":False}, tqdm=None):
+    def set_description(self,x):
+        pass
+
+tqdm_i = 0
+tqdm_lists = []
+tqdm_ins = None
+def update(img_name, count):
+    global tqdm_lists, tqdm_i, tqdm_ins
+    padding = " ".join(["" for i in range(25-len(f"{tqdm_lists[tqdm_i]}"))])
+    if tqdm_ins.total > tqdm_i:
+        tqdm_ins.set_description(f"{tqdm_lists[tqdm_i]}"+padding)
+        tqdm_ins.update(count)
+        tqdm_i += count
+
+def proceed(img, img_name, config={"level":False, "deaths":False, "mobs":False, "eliminations":False, "xp":False, "gold":False, "damage":False, "healing":False}, tqdm=None, tqdm_list=None):
+    global tqdm_ins, tqdm_lists, tqdm_i
+    tqdm_lists = tqdm_list
+    tqdm_ins = tqdm
     start = time.time()
     img = cv2.cvtColor(numpy.array(img), cv2.COLOR_RGB2BGR)
-    hitungan = 10
     if tqdm is None:
         tqdm = dummytqdm()
+    hitungan = 0
+    tqdm_i = 0
     for i in config.keys():
         if config[i]:
-            hitungan += 10
-    hitungan = round(tqdm.total/hitungan)
+            hitungan+=1
     w = img.shape[1]
     h = img.shape[0]
     changed = False
@@ -119,11 +138,11 @@ def proceed(img, img_name, config={"level":False, "deaths":False, "mobs":False, 
     x,y,w,h = ROI_firstname
     img1 = getThreshold(img[y:y+h, x:x+w])
     team1 = pytesseract.image_to_string(img1).replace(" ","_")
-
+    update(img_name,1)
     x,y,w,h = ROI_secondname
     img2 = getThreshold(img[y:y+h, x:x+w])
     team2 = pytesseract.image_to_string(img2).replace(" ","_")
-    
+    update(img_name,1)
     data = {
         team1: {},
         team2: {}
@@ -155,7 +174,7 @@ def proceed(img, img_name, config={"level":False, "deaths":False, "mobs":False, 
         else:
             f = -2
             teams = team2
-        tqdm.update(hitungan)
+        update(img_name,1)
         if len(string1) >0:
             temp = {}
             
@@ -182,8 +201,15 @@ def proceed(img, img_name, config={"level":False, "deaths":False, "mobs":False, 
                 if string2 == '':
                     string2 = '0'
                 temp[label[j]] = int(string2)
-                tqdm.update(hitungan)
+                update(img_name,1)
             data[teams].update({string1:temp})
+        else:
+            for j,score in enumerate(ROI_score):
+                hasil = config[label[j]]
+                if not hasil:
+                    continue
+                update(img_name,1)
+                sleep(0.1)
     end = time.time()
     result = {
         "filename" : os.path.basename(img_name),

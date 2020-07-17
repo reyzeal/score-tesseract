@@ -7,6 +7,10 @@ import mysql.connector
 from mysql.connector import Error
 from tqdm import tqdm
 from dotenv import load_dotenv
+import logging
+from datetime import datetime
+LOG_FILENAME = 'event.log'
+logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG)
 load_dotenv()
 
 # Create the parser
@@ -46,15 +50,19 @@ config = {
     "damage" : args.damage,
     "healing" : args.healing,
 }
+logging.info("Start New CLI :"+datetime.now().isoformat())
 total = 10
 if args.all != False:
+    logging.info("mode all")
     for i in config.keys():
         config[i] = True
         if config[i]:
             total += 10
 else:
+    logging.info("mode partial")
     for i in config.keys():
         config[i] = config[i] != False
+        logging.debug(f"mode {i}:{config[i]}")
         if config[i]:
             total += 10
 
@@ -87,51 +95,66 @@ try:
         cursor.close()
 except Error as e:
     print("Error while connecting to MySQL", e)
+    logging.error(f"Error while connecting to MySQL {e}")
 
 cursor = connection.cursor(prepared=True)
 change = False
+tqdm_list = ["Team 1 Name","Team 2 Name"]
+for i in range(2):
+    for j in range(10):
+        tqdm_list.append(f"Username slot {j+1}")
+        for k in config.keys():
+            if config[k]:
+                tqdm_list.append(f"{k} slot {j+1}")
 for filename in os.listdir(input_path):
     
-    img_name = os.path.basename(filename)
-    img = cv2.imread(os.path.join(input_path,filename))
-    
-    cursor.execute("select count(*) from scoreboard where filename=%s;",(filename,))
-    x = cursor.fetchone()[0]
-    
-    if x == 0 or (x>0 and args.replace != False):
-        change = True
-        print(f'Processing file {filename} : ')
-        t = tqdm(total=total)
-        data = proceed(img, img_name, config, tqdm=t)
-        for team in data['data'].keys():
-            for username in data['data'][team].keys():
-                tuple_prepared = (
-                filename, 
-                team,
-                username,
-                data['data'][team][username].get('level',None), 
-                data['data'][team][username].get('deaths',None), 
-                data['data'][team][username].get('mobs',None),
-                data['data'][team][username].get('eliminations',None),
-                data['data'][team][username].get('xp',None),
-                data['data'][team][username].get('gold',None),
-                data['data'][team][username].get('damage',None),
-                data['data'][team][username].get('healing',None),
-                data['data'][team][username].get('level',None), 
-                data['data'][team][username].get('deaths',None), 
-                data['data'][team][username].get('mobs',None),
-                data['data'][team][username].get('eliminations',None),
-                data['data'][team][username].get('xp',None),
-                data['data'][team][username].get('gold',None),
-                data['data'][team][username].get('damage',None),
-                data['data'][team][username].get('healing',None)
-                )
-                cursor.execute("""INSERT INTO scoreboard(filename,team,username,level,deaths,mobs,eliminations,xp,gold,damage,healing) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON DUPLICATE KEY UPDATE level=%s, deaths=%s, mobs=%s,eliminations=%s,xp=%s,gold=%s,damage=%s,healing=%s""", tuple_prepared)
-        t.close()
-    else:
-        print(f'Skip file {filename}... ')
-connection.commit()
-if change:
-    print(f'uploaded to mysql')
-else:
-    print(f'nothing to upload')
+    try:
+        img_name = os.path.basename(filename)
+        img = cv2.imread(os.path.join(input_path,filename))
+        
+        cursor.execute("select count(*) from scoreboard where filename=%s;",(filename,))
+        x = cursor.fetchone()[0]
+        
+        if x == 0 or (x>0 and args.replace != False):
+            change = True
+            logging.info(f'{datetime.now().isoformat()} processing {filename}')
+            print(f'Processing {filename}')
+            t = tqdm(total=total,unit='OCR')
+            
+            data = proceed(img, img_name, config, tqdm=t, tqdm_list=tqdm_list)
+            for team in data['data'].keys():
+                for username in data['data'][team].keys():
+                    tuple_prepared = (
+                    filename, 
+                    team,
+                    username,
+                    data['data'][team][username].get('level',None), 
+                    data['data'][team][username].get('deaths',None), 
+                    data['data'][team][username].get('mobs',None),
+                    data['data'][team][username].get('eliminations',None),
+                    data['data'][team][username].get('xp',None),
+                    data['data'][team][username].get('gold',None),
+                    data['data'][team][username].get('damage',None),
+                    data['data'][team][username].get('healing',None),
+                    data['data'][team][username].get('level',None), 
+                    data['data'][team][username].get('deaths',None), 
+                    data['data'][team][username].get('mobs',None),
+                    data['data'][team][username].get('eliminations',None),
+                    data['data'][team][username].get('xp',None),
+                    data['data'][team][username].get('gold',None),
+                    data['data'][team][username].get('damage',None),
+                    data['data'][team][username].get('healing',None)
+                    )
+                    cursor.execute("""INSERT INTO scoreboard(filename,team,username,level,deaths,mobs,eliminations,xp,gold,damage,healing) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON DUPLICATE KEY UPDATE level=%s, deaths=%s, mobs=%s,eliminations=%s,xp=%s,gold=%s,damage=%s,healing=%s""", tuple_prepared)
+            padding = " ".join(["" for i in range(21)])
+            t.set_description("DONE"+padding)
+            t.close()
+            connection.commit()
+            logging.info(f'done {filename}')
+        else:
+            print(f'Skip file {filename}... ')
+            logging.info(f'Skip file {filename}')
+    except Error as e:
+        logging.error(f"Error while scanning file {filename}, {e}")
+    except Exception as e:
+        logging.error(f"Error , {e}")
