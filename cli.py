@@ -26,6 +26,7 @@ parser.add_argument('-g','--gold', action='store', nargs='?', default=False, des
 parser.add_argument('-x','--xp', action='store', nargs='?', default=False, dest='xp')
 parser.add_argument('-d','--damage', action='store', nargs='?', default=False, dest='damage')
 parser.add_argument('-n','--healing', action='store', nargs='?', default=False, dest='healing')
+parser.add_argument('-r','--replace', action='store', nargs='?', default=False, dest='replace')
 
 # Execute the parse_args() method
 args = parser.parse_args()
@@ -83,20 +84,28 @@ try:
             healing INT NULL,
             primary key (filename, team, username)
         );""")
+        cursor.close()
 except Error as e:
     print("Error while connecting to MySQL", e)
 
-        
+cursor = connection.cursor(prepared=True)
+change = False
 for filename in os.listdir(input_path):
-    print(f'Processing file {filename} : ')
+    
     img_name = os.path.basename(filename)
     img = cv2.imread(os.path.join(input_path,filename))
-    t = tqdm(total=total)
     
-    data = proceed(img, img_name, config, tqdm=t)
-    for team in data['data'].keys():
-        for username in data['data'][team].keys():
-            tuple_prepared = (
+    cursor.execute("select count(*) from scoreboard where filename=%s;",(filename,))
+    x = cursor.fetchone()[0]
+    
+    if x == 0 or (x>0 and args.replace != False):
+        change = True
+        print(f'Processing file {filename} : ')
+        t = tqdm(total=total)
+        data = proceed(img, img_name, config, tqdm=t)
+        for team in data['data'].keys():
+            for username in data['data'][team].keys():
+                tuple_prepared = (
                 filename, 
                 team,
                 username,
@@ -117,7 +126,12 @@ for filename in os.listdir(input_path):
                 data['data'][team][username].get('damage',None),
                 data['data'][team][username].get('healing',None)
                 )
-            cursor.execute("""INSERT INTO scoreboard(filename,team,username,level,deaths,mobs,eliminations,xp,gold,damage,healing) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON DUPLICATE KEY UPDATE level=%s, deaths=%s, mobs=%s,eliminations=%s,xp=%s,gold=%s,damage=%s,healing=%s""", tuple_prepared)
-    t.close()
+                cursor.execute("""INSERT INTO scoreboard(filename,team,username,level,deaths,mobs,eliminations,xp,gold,damage,healing) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON DUPLICATE KEY UPDATE level=%s, deaths=%s, mobs=%s,eliminations=%s,xp=%s,gold=%s,damage=%s,healing=%s""", tuple_prepared)
+        t.close()
+    else:
+        print(f'Skip file {filename}... ')
 connection.commit()
-print(f'uploaded to mysql')
+if change:
+    print(f'uploaded to mysql')
+else:
+    print(f'nothing to upload')
