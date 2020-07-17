@@ -96,6 +96,7 @@ usage: cli.py [-h] [-a [ALL]] [-l [LEVEL]] [-e [ELIMINATIONS]] [-t [DEATHS]] [-m
     -x  : xp
     -d  : damage
     -n  : healing
+    -r  : replace mode, overwrite all data in database. Just in case that if you need to rescan information from partial detail to all full detail.
 ```
 
 ### Example
