@@ -1,6 +1,6 @@
 # Switchblade Score-Tesseract OCR
 Debian 8 Server Environment\
-by reyzeal (Rizal Ardhi Rahmadani)\
+by reyzeal (Rizal Ardhi Rahmadani)
 
 ## About Project
 This is documentation of my [Freelancer project](https://www.freelancer.co.id/projects/php/Image-text-OCR-using-tesseract-26533030/details). The goal of this project is to extract all information on the scoreboard from Switchblade games using Tesseract OCR as the core technology.
@@ -11,45 +11,56 @@ https://www.switchbladegame.com/
 
 ![Example](https://github.com/reyzeal/score-tesseract/raw/master/tester/Switchblade_20200608185314.jpg)
 
-## Manual Installation
-
-1. First of all, make sure you have Python3 installed + Python virtualenv
+## Instruction
+1. Install core dependency
 ```bash
-    sudo apt-get install python3 python3-pip python3-virtualenv
+apt-get install -y build-essential libssl-dev zlib1g-dev libbz2-dev \
+libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
+xz-utils tk-dev libffi-dev liblzma-dev python-openssl git libsm6
 ```
 2. Install Tesseract-ocr
 ```bash
-    sudo apt-get install tesseract-ocr
+apt-get install tesseract-ocr
 ```
-3. Install the dependency library
+3. Install the python 3.6.11 through pyenv
 ```bash
-    sudo apt-get install libsm
+curl https://pyenv.run | bash
 ```
-4. Download my source code to your specified server directory
+4. Add this following lines to ~/.bashrc so your command line can run pyenv. You can use nano/vim or any other cli text editor.
 ```bash
-    cd ~
-    git clone https://github.com/reyzeal/score-tesseract
-    cd score-tesseract
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
 ```
-5. Create virtualenv to make python environment for this project
+5. Restart shell using: `exec $SHELL`
+6. Install python 3.6.11: `pyenv install 3.6.11`
+7. Make python as global : `pyenv global 3.6.11`
+8. Update the pip : `pip3 install --upgrade pip`
+9. Download my source code to your specified server directory. Install git if it's not installed yet `apt-get install git`.
 ```bash
-    virtualenv venv
+cd ~
+git clone https://github.com/reyzeal/score-tesseract
+cd score-tesseract
 ```
-6. Activate the environment
+10. Create virtualenv to make python environment for this project
 ```bash
-    source venv/bin/activate
+python3 -m virtualenv venv
 ```
-7. Install all requirements library using requirements.txt
+11. Activate the environment
 ```bash
-    pip3 install -r requirements.txt
+source venv/bin/activate
 ```
-8. you can try to run it:
+12. Install all requirements library using requirements.txt
 ```bash
-    venv/bin/gunicorn -b 127.0.0.1:5000 app:app
+pip3 install -r requirements.txt
+```
+13. you can try to run it:
+```bash
+venv/bin/gunicorn -b 127.0.0.1:5000 app:app
 ```
 ![Image of server](https://github.com/reyzeal/score-tesseract/raw/master/server/first.png)
 
-9. Done, if you prefer to run it as server service, stop the execution and do the following steps
+14. Done, if you prefer to run it as server service, stop the execution and do the following steps
     below.
 
 ## Deploy as Systemd Service
@@ -66,8 +77,8 @@ After=network.target
 [Service]
 User= ubuntu
 Group= ubuntu
-WorkingDirectory= /home/ubuntu/score-tesseract
-ExecStart= /home/ubuntu/score-tesseract/ venv/bin/gunicorn -w 3 -b
+WorkingDirectory=/home/ubuntu/score-tesseract
+ExecStart=/home/ubuntu/score-tesseract/ venv/bin/gunicorn -w 3 -b
 127.0.0.1:5000 app:app
 
 [Install]
@@ -78,7 +89,7 @@ WantedBy=multi-user.target
 User= **<your username>**
 Group= **<your username>**
 WorkingDirectory= **/path/to/project**
-ExecStart= **/path/to/project/** venv/bin/gunicorn -w 3 -b 127.0.0.1:5000 app:app
+ExecStart= **/path/to/project/**venv/bin/gunicorn -w 3 -b 127.0.0.1:5000 app:app
 ```
 3. Save the file on **/etc/systemd/system/score.service.** Just save and close it if you already
     using vim / nano directly.
