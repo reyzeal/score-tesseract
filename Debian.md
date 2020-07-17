@@ -60,7 +60,7 @@ venv/bin/gunicorn -b 127.0.0.1:5000 app:app
 ```
 ![Image of server](https://github.com/reyzeal/score-tesseract/raw/master/server/first.png)
 
-9. Done, if you prefer to run it as server service, stop the execution and do the following steps
+14. Done, if you prefer to run it as server service, stop the execution and do the following steps
     below.
 
 ## Deploy as Systemd Service
