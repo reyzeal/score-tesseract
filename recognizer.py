@@ -74,7 +74,16 @@ def proceed(img, img_name, config={"level":False, "deaths":False, "mobs":False, 
         else:
             threshold = cv2.erode(threshold,(3,3),iterations = 1)
         
+        black = 0
         if threshold[1][1] < 200:
+            black+=1
+        if threshold[h-1][w-1] < 200:
+            black+=1
+        if threshold[h-1][1] < 200:
+            black+=1
+        if threshold[1][w-1] < 200:
+            black+=1
+        if black > 1:
             threshold = cv2.erode(threshold,k,iterations = 1)
             threshold_inv = cv2.bitwise_not(threshold)
         else:
@@ -189,19 +198,29 @@ def proceed(img, img_name, config={"level":False, "deaths":False, "mobs":False, 
                 a,b,c,d = score
                 if j == 0:
                     if i == 3:
-                        img2 = getThreshold(img[y+24+f-15:y+f+20+d, a:a+c])
+                        # img2 = getThreshold(img[y+24+f-15:y+f+20+d, a:a+c])
+                        img2 = getThreshold(img[y+24+f-15:y+f+12+d, a:a+c])
+                    elif i == 4:
+                        img2 = getThreshold(img[y+22+f:y+26+f+d, a:a+c])
+                    elif i == 5:
+                        img2 = getThreshold(img[y+24+f:y+30+f+d, a:a+c])
+                    elif i == 6:
+                        img2 = getThreshold(img[y+22+f:y+27+f+d, a:a+c])
+                    elif i == 7:
+                        img2 = getThreshold(img[y+18+f:y+22+f+d, a:a+c])
+                    elif i == 8:
+                        img2 = getThreshold(img[y+16+f:y+22+f+d, a:a+c])
                     elif i == 9:
-                        img2 = getThreshold(img[y+26+f:y+33+f+d, a:a+c])
+                        img2 = getThreshold(img[y+28+f:y+33+f+d, a:a+c])
                     else:
-                        img2 = getThreshold(img[y+22+f:y+30+f+d, a:a+c])
+                        img2 = getThreshold(img[y+22+f:y+22+f+d, a:a+c])
                     img2 = centroid(img2)
-
-                    # if i == 5 or i == 9:
-                    #     cv2.imwrite(f'temp/test{i}.png',img2)
-                    #     cv2.imwrite(f'temp/test{i}_.png',cv2.bitwise_not(img2))
-                    string2 = pytesseract.image_to_string(img2, config="--psm 8 --oem 1 -c tessedit_char_whitelist=0123456789 --tessdata-dir .").replace(" ","")
+                    cv2.imwrite(f'temp/test{i}.png',img2)
+                    cv2.imwrite(f'temp/test{i}_.png',cv2.bitwise_not(img2))  
+                    string2 = pytesseract.image_to_string(img2, config="--psm 8 --oem 1 -c tessedit_char_whitelist=0123456789 --tessdata-dir best").replace(" ","")
+                    
                     if string2 == '':
-                        string2 = pytesseract.image_to_string(img2, config="--psm 6 --oem 1 -c tessedit_char_whitelist=0123456789 --tessdata-dir .").replace(" ","")
+                        string2 = pytesseract.image_to_string(img2, config="--psm 6 --oem 1 -c tessedit_char_whitelist=0123456789 --tessdata-dir best").replace(" ","")
                 else:
                     img2 = getThreshold(img[y:y+d, a:a+c])
                     img2 = centroid(img2)
