@@ -138,12 +138,14 @@ def proceed(img, img_name, config={"level":False, "deaths":False, "mobs":False, 
         'healing'
     ]
     x,y,w,h = ROI_firstname
-    img1 = getThreshold(img[y:y+h, x:x+w])
-    team1 = pytesseract.image_to_string(img1).replace(" ","_")
+    # img1 = getThreshold(img[y:y+h, x:x+w])
+    # team1 = pytesseract.image_to_string(img1).replace(" ","_")
+    team1 = "SHARKS"
     update(img_name,1)
     x,y,w,h = ROI_secondname
-    img2 = getThreshold(img[y:y+h, x:x+w])
-    team2 = pytesseract.image_to_string(img2).replace(" ","_")
+    # img2 = getThreshold(img[y:y+h, x:x+w])
+    # team2 = pytesseract.image_to_string(img2).replace(" ","_")
+    team2 = "LIONS"
     update(img_name,1)
     data = {
         team1: {},
@@ -193,7 +195,13 @@ def proceed(img, img_name, config={"level":False, "deaths":False, "mobs":False, 
                     else:
                         img2 = getThreshold(img[y+22+f:y+30+f+d, a:a+c])
                     img2 = centroid(img2)
+
+                    # if i == 5 or i == 9:
+                    #     cv2.imwrite(f'temp/test{i}.png',img2)
+                    #     cv2.imwrite(f'temp/test{i}_.png',cv2.bitwise_not(img2))
                     string2 = pytesseract.image_to_string(img2, config="--psm 8 --oem 1 -c tessedit_char_whitelist=0123456789 --tessdata-dir .").replace(" ","")
+                    if string2 == '':
+                        string2 = pytesseract.image_to_string(img2, config="--psm 6 --oem 1 -c tessedit_char_whitelist=0123456789 --tessdata-dir .").replace(" ","")
                 else:
                     img2 = getThreshold(img[y:y+d, a:a+c])
                     img2 = centroid(img2)

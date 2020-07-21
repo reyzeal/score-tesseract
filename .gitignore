@@ -129,5 +129,7 @@ dmypy.json
 .pyre/
 ./*.jpg
 temp/*.jpg
+temp/*.png
+temp
 dataset
 tester/
