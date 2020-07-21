@@ -27,6 +27,8 @@ tqdm_lists = []
 tqdm_ins = None
 def update(img_name, count):
     global tqdm_lists, tqdm_i, tqdm_ins
+    if tqdm_lists is None:
+        return
     padding = " ".join(["" for i in range(25-len(f"{tqdm_lists[tqdm_i]}"))])
     if tqdm_ins.total > tqdm_i:
         tqdm_ins.set_description(f"{tqdm_lists[tqdm_i]}"+padding)
