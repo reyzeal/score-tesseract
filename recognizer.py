@@ -215,8 +215,8 @@ def proceed(img, img_name, config={"level":False, "deaths":False, "mobs":False, 
                     else:
                         img2 = getThreshold(img[y+22+f:y+22+f+d, a:a+c])
                     img2 = centroid(img2)
-                    cv2.imwrite(f'temp/test{i}.png',img2)
-                    cv2.imwrite(f'temp/test{i}_.png',cv2.bitwise_not(img2))  
+                    # cv2.imwrite(f'temp/test{i}.png',img2)
+                    # cv2.imwrite(f'temp/test{i}_.png',cv2.bitwise_not(img2))  
                     string2 = pytesseract.image_to_string(img2, config="--psm 8 --oem 1 -c tessedit_char_whitelist=0123456789 --tessdata-dir best").replace(" ","")
                     
                     if string2 == '':
