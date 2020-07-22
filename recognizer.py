@@ -34,7 +34,12 @@ def update(img_name, count):
         tqdm_ins.set_description(f"{tqdm_lists[tqdm_i]}"+padding)
         tqdm_ins.update(count)
         tqdm_i += count
-
+def most_frequent(List): 
+    try: 
+        List = [x for x in List if x != '']
+        return max(set(List), key = List.count) 
+    except ValueError:
+        return ''
 def proceed(img, img_name, config={"level":False, "deaths":False, "mobs":False, "eliminations":False, "xp":False, "gold":False, "damage":False, "healing":False}, tqdm=None, tqdm_list=None):
     global tqdm_ins, tqdm_lists, tqdm_i
     tqdm_lists = tqdm_list
@@ -215,12 +220,18 @@ def proceed(img, img_name, config={"level":False, "deaths":False, "mobs":False, 
                     else:
                         img2 = getThreshold(img[y+22+f:y+22+f+d, a:a+c])
                     img2 = centroid(img2)
-                    # cv2.imwrite(f'temp/test{i}.png',img2)
-                    # cv2.imwrite(f'temp/test{i}_.png',cv2.bitwise_not(img2))  
-                    string2 = pytesseract.image_to_string(img2, config="--psm 8 --oem 1 -c tessedit_char_whitelist=0123456789 --tessdata-dir best").replace(" ","")
-                    
+                    string2 = pytesseract.image_to_string(img2, config="--psm 8 --oem 0 -c tessedit_char_whitelist=0123456789 --tessdata-dir .")
                     if string2 == '':
-                        string2 = pytesseract.image_to_string(img2, config="--psm 6 --oem 1 -c tessedit_char_whitelist=0123456789 --tessdata-dir best").replace(" ","")
+                        x = [
+                                pytesseract.image_to_string(img2, config="--psm 6 --oem 0 -c tessedit_char_whitelist=0123456789 --tessdata-dir ."),
+                                pytesseract.image_to_string(img2, config="--psm 6 --oem 1 -c tessedit_char_whitelist=0123456789 --tessdata-dir best"),
+                                pytesseract.image_to_string(img2, config="--psm 7 --oem 1 -c tessedit_char_whitelist=0123456789 --tessdata-dir best")
+                            ]
+                        string2 = most_frequent(x)
+                    # string2 = pytesseract.image_to_string(img2, config="--psm 8 --oem 1 -c tessedit_char_whitelist=0123456789 --tessdata-dir best").replace(" ","")
+                    
+                    # if string2 == '':
+                    #     string2 = pytesseract.image_to_string(img2, config="--psm 6 --oem 1 -c tessedit_char_whitelist=0123456789 --tessdata-dir best").replace(" ","")
                 else:
                     img2 = getThreshold(img[y:y+d, a:a+c])
                     img2 = centroid(img2)
@@ -229,15 +240,23 @@ def proceed(img, img_name, config={"level":False, "deaths":False, "mobs":False, 
                     #     putih = numpy.zeros((h,w), numpy.uint8)
                     #     putih[:,:] = 255
                     #     img2 = numpy.concatenate((putih,img2,putih),axis=1)
+                    
                     if j <= 2:
-                        img2 = img2[:-7,:]
-                        string2 = pytesseract.image_to_string(img2, config="--psm 6 --oem 1 -c tessedit_char_whitelist=0123456789, --tessdata-dir best").replace(" ","")
-                        if string2 == '':
-                            string2 = pytesseract.image_to_string(img2, config="--psm 7 --oem 1 -c tessedit_char_whitelist=0123456789, --tessdata-dir best").replace(" ","")
+                        img2 = img2[:-9,:]
+                        x = [
+                            pytesseract.image_to_string(img2, config="--psm 6 --oem 0 -c tessedit_char_whitelist=0123456789, --tessdata-dir ."),
+                            pytesseract.image_to_string(img2, config="--psm 8 --oem 0 -c tessedit_char_whitelist=0123456789, --tessdata-dir ."),
+                            pytesseract.image_to_string(img2, config="--psm 6 --oem 1 -c tessedit_char_whitelist=0123456789, --tessdata-dir ."),
+                            pytesseract.image_to_string(img2, config="--psm 7 --oem 1 -c tessedit_char_whitelist=0123456789, --tessdata-dir best")
+                        ]
+                        string2 = most_frequent(x)
+                        # string2 = pytesseract.image_to_string(img2, config="--psm 6 --oem 0 -c tessedit_char_whitelist=0123456789, --tessdata-dir .").replace(" ","")
+                        # if string2 == '':
+                        #     string2 = pytesseract.image_to_string(img2, config="--psm 7 --oem 1 -c tessedit_char_whitelist=0123456789, --tessdata-dir best").replace(" ","")
                     else:
                         string2 = pytesseract.image_to_string(img2, config="--psm 6 --oem 0 -c tessedit_char_whitelist=0123456789, --tessdata-dir .").replace(" ","")
-                    # cv2.imwrite(f'temp/test{i}{j}.png',img2)
-                    # cv2.imwrite(f'temp/test{i}{j}_.png',cv2.bitwise_not(img2)) 
+                # cv2.imwrite(f'temp/test{i}{j}.png',img2)
+                # cv2.imwrite(f'temp/test{i}{j}_.png',cv2.bitwise_not(img2)) 
                     
                 
                 string2=string2.replace(",","").replace(".",'')
