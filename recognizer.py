@@ -431,7 +431,7 @@ def proceedList(img, img_name, config={"level":False, "deaths":False, "mobs":Fal
                     "min_confidence" : 0.5
                 })
         if len(imgs) > 0:
-            cv2.imwrite(f'temp/{i}.png',c)
+            # cv2.imwrite(f'temp/{i}.png',c)
             string1 = pytesseract.image_to_string(c,config='-l eng --psm 6 --oem 1 -c tessedit_char_whitelist=0123456789_-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ --tessdata-dir .').replace(" ","_")
         else:
             string1 = ""
