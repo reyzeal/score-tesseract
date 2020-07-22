@@ -224,7 +224,21 @@ def proceed(img, img_name, config={"level":False, "deaths":False, "mobs":False, 
                 else:
                     img2 = getThreshold(img[y:y+d, a:a+c])
                     img2 = centroid(img2)
-                    string2 = pytesseract.image_to_string(img2, config="--psm 7 --oem 0 -c tessedit_char_whitelist=0123456789, --tessdata-dir .").replace(" ","")
+                    # if j <= 2:
+                    #     h,w = img2.shape[:2]
+                    #     putih = numpy.zeros((h,w), numpy.uint8)
+                    #     putih[:,:] = 255
+                    #     img2 = numpy.concatenate((putih,img2,putih),axis=1)
+                    if j <= 2:
+                        img2 = img2[:-7,:]
+                        string2 = pytesseract.image_to_string(img2, config="--psm 6 --oem 1 -c tessedit_char_whitelist=0123456789, --tessdata-dir best").replace(" ","")
+                        if string2 == '':
+                            string2 = pytesseract.image_to_string(img2, config="--psm 7 --oem 1 -c tessedit_char_whitelist=0123456789, --tessdata-dir best").replace(" ","")
+                    else:
+                        string2 = pytesseract.image_to_string(img2, config="--psm 6 --oem 0 -c tessedit_char_whitelist=0123456789, --tessdata-dir .").replace(" ","")
+                    cv2.imwrite(f'temp/test{i}{j}.png',img2)
+                    cv2.imwrite(f'temp/test{i}{j}_.png',cv2.bitwise_not(img2)) 
+                    
                 
                 string2=string2.replace(",","").replace(".",'')
                 if string2 == '':
