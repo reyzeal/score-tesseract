@@ -12,7 +12,7 @@ mccabe==0.6.1
 numpy==1.19.0
 opencv-python==4.3.0.36
 Pillow==7.2.0
-protobuf==3.12.2
+protobuf==3.18.3
 pytesseract==0.3.4
 python-dotenv==0.14.0
 six==1.15.0
